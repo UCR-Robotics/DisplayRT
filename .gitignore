@@ -1,7 +1,9 @@
-.vscode
+# .vscode
 
 build
 
 bin
+
+lib
 
 thirdparty/QCustomPlot/lib

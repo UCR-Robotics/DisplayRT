@@ -1,0 +1,25 @@
+{
+    "configurations": [
+        {
+            "name": "Linux",
+            "includePath": [
+                "${workspaceFolder}/**", 
+                "${workspaceFolder}/include", 
+                // "${workspaceFolder}/thirdparty/mjbots/include", 
+                "/usr/include/eigen3", 
+                "/usr/local/include/**", 
+                // "/usr/local/webots/include/controller/cpp/",
+                "/usr/include/x86_64-linux-gnu/qt5", 
+                "/usr/include/x86_64-linux-gnu/qt5/QtCore",
+                "${workspaceFolder}/thirdparty/QCustomPlot/" 
+                // "/usr/include/x86_64-linux-gnu/qt5/QtWidgets"
+            ],
+            "defines": [],
+            "compilerPath": "/usr/bin/gcc",
+            "cStandard": "c17",
+            "cppStandard": "gnu++17",
+            "intelliSenseMode": "linux-gcc-x64"
+        }
+    ],
+    "version": 4
+}
