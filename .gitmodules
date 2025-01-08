@@ -1,0 +1,3 @@
+[submodule "thirdparty/QCustomPlot"]
+	path = thirdparty/QCustomPlot
+	url = git@gitlab.com:ecme2/QCustomPlot.git
