@@ -15,20 +15,20 @@ set_target_properties(test_qcp
 )
 
 # test_rt_monitor
-add_executable(test_rt_monitor 
-                test_rt_monitor.cc
+add_executable(test_display_rt 
+                test_display_rt.cc
                 # ../include/rt_monitor.h
                 # ../include/rt_monitor.cc
 )
 
-target_link_libraries(test_rt_monitor displayrt)
+target_link_libraries(test_display_rt displayrt)
 
 # target_include_directories(test_rt_monitor PUBLIC 
 #     ${QCustomPlot_INCLUDE_DIR}
 #     ../include
 # )
 
-set_target_properties(test_rt_monitor
+set_target_properties(test_display_rt
     PROPERTIES
     RUNTIME_OUTPUT_DIRECTORY "${DISPLAY_RT_DIR}/bin"
 )

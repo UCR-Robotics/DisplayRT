@@ -18,6 +18,9 @@
  *
  * Author(s): 
  * - Keran Ye (keran.ye@email.ucr.edu)
+ * 
+ * The content of this file is about testing multiple-window display using DisplayRT. 
+ * The display property is manually defined in the main function. 
  */
 
 #include <memory>
@@ -34,13 +37,13 @@
 
 #include "qcustomplot.h"
 
-#include "rt_display.h"
+#include "displayRT.h"
 
-using namespace rt_display; // for QCP_Monitor
+using namespace display_rt; // for DisplayRT
 
-int multiple_windows ( int argc, char *argv[] )
+int main(int argc, char *argv[])
 {
-    std::shared_ptr<QCP_Monitor_Property> monitor_property; 
+    std::shared_ptr<DisplayRT_Property> monitor_property; 
     int id = 0;
     int window_count = 2;
     std::vector< std::shared_ptr<QCP_Window_Property> > window_properties;
@@ -399,9 +402,9 @@ int multiple_windows ( int argc, char *argv[] )
     }
     // window_properties.push_back(window_property);
 
-    monitor_property = std::make_shared<QCP_Monitor_Property>(id, window_count, window_properties);
+    monitor_property = std::make_shared<DisplayRT_Property>(id, window_count, window_properties);
     
-    auto monitor = std::make_shared<QCP_Monitor>( monitor_property ); 
+    auto monitor = std::make_shared<DisplayRT>( monitor_property ); 
 
     monitor->Initial( argc, argv); 
 
@@ -410,9 +413,6 @@ int multiple_windows ( int argc, char *argv[] )
     monitor->Start(); 
 
     return 0; 
-}
 
-int main(int argc, char *argv[])
-{
-    return multiple_windows(argc, argv);
+    // return multiple_windows(argc, argv);
 }

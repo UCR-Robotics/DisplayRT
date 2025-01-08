@@ -43,21 +43,26 @@
 
 // #include "parser/abstraction_parser.h"
 
-namespace rt_display {
+namespace display_rt {
 
 /***************************/
 /******** Properties *******/
 /***************************/
 
+/**
+ * @brief Pen property for QCustomPlot. 
+ * The pen property includes color, style and width for line drawing.
+ * 
+ */
 class QCP_Pen_Property {
 public: // major methods
     
     /**
      * @brief Constructor for QCP Pen Property
      * 
-     * @param color pen color, that is, line color
-     * @param style pen style, that is, line style
-     * @param width pen width, that is, line width
+     * @param color pen color
+     * @param style pen style
+     * @param width pen width
      */
     QCP_Pen_Property( 
         const std::string &color,
@@ -68,9 +73,9 @@ public: // major methods
     // QCP_Pen_Property() {}; 
 
 private: // internal variables
-    Qt::GlobalColor _color; // pen color, that is, line color
-    Qt::PenStyle _style; // pen style, that is, line style
-    int _width; // pen width, that is, line width
+    Qt::GlobalColor _color; // pen color
+    Qt::PenStyle _style; // pen style
+    int _width; // pen width
 
 private: // internal methods
     void setColor( const std::string &color );
@@ -84,6 +89,11 @@ public: // accessors
 
 }; // class QCP_Pen_Property
 
+/**
+ * @brief Graph property for QCustomPlot. 
+ * The graph property includes id, name, line style and pen properties for graph drawing.
+ * 
+ */
 class QCP_Graph_Property {
 public: // major methods
     
@@ -91,9 +101,9 @@ public: // major methods
      * @brief Constructor for QCP Graph Property
      * 
      * @param id id for graph, used for local index under the same axis
-     * @param pen_property pen property for graph drawing
      * @param name name for graph, used for legend
      * @param line_style line style between data points for graph
+     * @param pen_property pen property for line drawing
      */
     QCP_Graph_Property( 
         const int id,
@@ -104,10 +114,8 @@ public: // major methods
 
 private: // internal variables
     int _id; // id for graph, that is, local index under the same axis
-    
     QString _name; // name for graph, used for legend
     QCPGraph::LineStyle _line_style; // line style between data points for graph 
-
     std::shared_ptr<QCP_Pen_Property> _pen_property; // pen property for graph drawing
 
 private: // internal methods
@@ -116,14 +124,17 @@ private: // internal methods
 
 public: // accessors
     int Id() const { return _id; }
-    
     QString Name() const { return _name; }
     QCPGraph::LineStyle LineStyle() const { return _line_style; }
-
     std::shared_ptr<QCP_Pen_Property> PenProperty() const { return _pen_property; }
 
 }; // class QCP_Graph_Property
 
+/**
+ * @brief Axis property for QCustomPlot.
+ * The axis property includes axis attributes and graph properties under the same axis.
+ * 
+ */
 class QCP_Axis_Property {
 public: // major methods
         
@@ -158,15 +169,12 @@ private: // internal variables
     int _id; // id for axis, that is, local index under the same plot
     int _graph_count; // number of graphs under the same axis
     QString _title; // title for axis
-
     QString _x_label; // x-axis label
     QString _y_label; // y-axis label
-
     double _x_gap; // x-axis gap, for dynamic range
     double _y_min; // y-axis minimum value
     double _y_max; // y-axis maximum value
     bool _if_auto_scale; // if auto scale for y-axis
-
     std::vector< std::shared_ptr<QCP_Graph_Property> > _graph_properties; // graph properties under the same axis
 
 private: // internal methods
@@ -188,6 +196,11 @@ public: // accessors
 
 }; // class QCP_Axis_Property
 
+/**
+ * @brief Plot property for QCustomPlot. 
+ * The plot property includes plot attributes and axis properties under the same plot. 
+ * 
+ */
 class QCP_Plot_Property {
 public: // major methods
         
@@ -208,12 +221,10 @@ public: // major methods
 private: // internal variables
     int _id; // id for plot, that is, local index under the same window
     int _axis_count; // number of axes under the same plot
-
     std::string _title; // title for plot
-
     std::vector< std::shared_ptr<QCP_Axis_Property> > _axis_properties; // axis properties under the same plot
 
-// private: // internal methods
+private: // internal methods
 //     void setTitle( const std::string &title );
 
 public: // accessors
@@ -224,6 +235,11 @@ public: // accessors
 
 }; // class QCP_Plot_Property
 
+/**
+ * @brief Window property for QCustomPlot. 
+ * The window property includes window attributes and plot properties under the same window.
+ * 
+ */
 class QCP_Window_Property {
 public: // major methods
             
@@ -250,10 +266,8 @@ private: // internal variables
     int _id; // id for window, that is, local index under the same monitor
     std::string _channel; // message channel for window
     int _plot_count; // number of plots under the same window
-
     int _width; // window width, in pixels
     int _height; // window height, in pixels
-
     std::vector< std::shared_ptr<QCP_Plot_Property> > _plot_properties; // plot properties under the same window
 
 private: // internal methods
@@ -268,7 +282,12 @@ public: // accessors
 
 }; // class QCP_Window_Property
 
-class QCP_Monitor_Property // : public arcs::sciq::Monitor_Abstraction::MonitorConfig 
+/**
+ * @brief DisplayRT property, 
+ * that includes display attributes and window properties under the same display.
+ * 
+ */
+class DisplayRT_Property // : public arcs::sciq::Monitor_Abstraction::MonitorConfig 
 {
 public: // major methods
                 
@@ -276,20 +295,19 @@ public: // major methods
     * @brief Constructor for QCP Monitor Property
     * 
     * @param id id for monitor
-    * @param window_count number of windows under the same monitor
-    * @param window_properties window properties under the same monitor
+    * @param window_count number of windows under the same display
+    * @param window_properties window properties under the same display
     */
-    QCP_Monitor_Property( 
+    DisplayRT_Property( 
         const int id,
         const int window_count,
         const std::vector< std::shared_ptr<QCP_Window_Property> > &window_properties
     );
 
 private: // internal variables
-    int _id; // id for monitor
-    int _window_count; // number of windows under the same monitor
-
-    std::vector< std::shared_ptr<QCP_Window_Property> > _window_properties; // window properties under the same monitor
+    int _id; // id for display
+    int _window_count; // number of windows under the same display
+    std::vector< std::shared_ptr<QCP_Window_Property> > _window_properties; // window properties under the same display
 
 private: // internal methods
 
@@ -298,83 +316,84 @@ public: // accessors
     int WindowCount() const { return _window_count; }
     std::vector< std::shared_ptr<QCP_Window_Property> > WindowProperties() const { return _window_properties; }
     
-}; // class QCP_Monitor_Property
+}; // class DisplayRT_Property
 
-/***************************/
-/******** Qt Wrapper *******/
-/***************************/
+
+
+/**************************/
+/******** Qt Object *******/
+/**************************/
 
 class QCP_Window;
 class QCP_Plot;
 class QCP_Axis;
 
+/**
+ * @brief Window based on QCustomPlot.
+ * 
+ */
 class QCP_Window
 {
 public: // major methods
 
-    QCP_Window( 
-        const int id
-    )
-    : _id(id)
-    {
-        // window
-        this->_window = std::make_shared<QMainWindow>();
-        // central widget
-        this->_centralWidget = std::make_shared<QWidget>( this->_window.get() );
-        this->_layout = std::make_shared<QGridLayout>(this->_centralWidget.get());
-    }
+    /**
+     * @brief Constructor for a QCP-based window
+     * 
+     * @param id window ID
+     */
+    QCP_Window( const int id ); 
 
     ~QCP_Window() {}
 
 private: // internal variables
     int _id; // id for window
     std::string _channel=""; // message channel for window
-
-    std::shared_ptr<QMainWindow> _window; // window
-    std::shared_ptr<QWidget> _centralWidget;
-    std::shared_ptr<QGridLayout> _layout;
-
-    std::vector< std::shared_ptr<QCP_Plot> > _plots; // child plots
+    std::shared_ptr<QMainWindow> _window; // QT window
+    std::shared_ptr<QWidget> _centralWidget; // QT central widget
+    std::shared_ptr<QGridLayout> _layout; // QT layout
+    std::vector< std::shared_ptr<QCP_Plot> > _plots; // child QCP-based plots
 
 public: // accessors
     int Id() { return _id; }
-
     void setChannel( const std::string &channel ) { this->_channel = channel; }
     std::string Channel() { return this->_channel; }
-
     std::shared_ptr<QMainWindow> Window() { return _window; }
     std::shared_ptr<QWidget> CentralWidget() { return _centralWidget; }
     std::shared_ptr<QGridLayout> Layout() { return _layout; }
-
     void insertPlot( std::shared_ptr<QCP_Plot> plot ) { this->_plots.push_back(plot); }
     std::vector< std::shared_ptr<QCP_Plot> > Plots() { return this->_plots; }
 
 }; // class QCP_Window
 
+/**
+ * @brief Plot based on QCustomPlot.
+ * 
+ */
 class QCP_Plot
 {
 public: // major methods
 
+    /**
+     * @brief Constructor for a QCP-based plot
+     * 
+     * @param id plot ID
+     * @param window parent QCP-based window
+     */
     QCP_Plot( 
         const int id, 
         std::shared_ptr<QCP_Window> window
-    ) 
-    : _id(id), _parent_window(window) 
-    {
-        this->_plot = std::make_shared<QCustomPlot>( window->Window().get() );
-        this->_axes.clear();
-    }
+    );  
 
     ~QCP_Plot() {}
+
 private: // internal variables
     int _id; // id for plot
     std::string _title=""; // plot title
     std::string _channel=""; // message channel for plot
-    std::shared_ptr<QCP_Window> _parent_window; 
-
-    std::shared_ptr<QCustomPlot> _plot;
-    std::shared_ptr<QCPTextElement> _title_element; 
-    std::vector< std::shared_ptr<QCP_Axis> > _axes; // child axes
+    std::shared_ptr<QCP_Window> _parent_window; // parent QCP-based window
+    std::shared_ptr<QCustomPlot> _plot; // QT plot
+    std::shared_ptr<QCPTextElement> _title_element; // QT plot title 
+    std::vector< std::shared_ptr<QCP_Axis> > _axes; // child QCP-based axes
 
 public: // accessors
     int Id() const { return _id; }
@@ -396,78 +415,56 @@ public: // accessors
 
 }; // class QCP_Plot
 
+/**
+ * @brief Axis based on QCustomPlot.
+ * 
+ */
 class QCP_Axis
 {
 public: // major methods
 
+    /**
+     * @brief Constructor for a QCP-based axis
+     * 
+     * @param id axis ID
+     * @param plot parent QCP-based plot
+     */
     QCP_Axis( 
         const int id, 
         std::shared_ptr<QCP_Plot> plot
-    ) 
-    : _id(id), _parent_plot(plot) 
-    {
-        this->_axis = std::make_shared<QCPAxisRect>( this->_parent_plot->Plot().get() );
+    ); 
+    // : _id(id), _parent_plot(plot) 
+    // {
+    //     this->_axis = std::make_shared<QCPAxisRect>( this->_parent_plot->Plot().get() );
         
-        // clear
-        this->_graph_id_index_map.clear();
-        this->_legend_items.clear();
-    }
+    //     // clear
+    //     this->_graph_id_index_map.clear();
+    //     this->_legend_items.clear();
+    // }
 
     ~QCP_Axis() {}
 
 private: // internal variables
-    // general info
     int _id; // id for axis
-    
-    // connection
-    std::shared_ptr<QCP_Plot> _parent_plot;
+    std::shared_ptr<QCP_Plot> _parent_plot; // parent QCP-based plot
     std::shared_ptr<QCPAxisRect> _axis; // axis
     std::map<int,int> _graph_id_index_map; // map from [graph id] to [local index] under the same axis
-
-    // legend
-    std::shared_ptr<QCPLegend> _legend;
+    std::shared_ptr<QCPLegend> _legend; // QCP legend
     std::vector< std::shared_ptr<QCPPlottableLegendItem> > _legend_items;
-
     bool _if_auto_scale; // if auto scale for y-axis
     double _x_gap; // fixed x-axis gap, for dynamic range
-
 
 public: // accessors
     int Id() { return _id; }
     std::shared_ptr<QCP_Plot> ParentPlot() { return _parent_plot; }
     std::shared_ptr<QCPAxisRect> Axis() { return _axis; }
 
-    void insertGraphIdIndexMap( const int graph_id, const int index ) { 
-        // check if graph id exists
-        if ( this->_graph_id_index_map.find(graph_id) != this->_graph_id_index_map.end() ) {
-            // if exists, update
-            this->_graph_id_index_map[graph_id] = index; 
-            return;
-        }
-        this->_graph_id_index_map[graph_id] = index; 
-    }
-
-    int getGraphIndex( const int graph_id ) { 
-        // check if graph id exists
-        if ( this->_graph_id_index_map.find(graph_id) != this->_graph_id_index_map.end() ) {
-            // if exists, return
-            return this->_graph_id_index_map[graph_id]; 
-        }
-        return -1;
-    }
-
-    std::string showGraphIdIndexMap() {
-        std::stringstream ss;
-        for ( const auto &pair : this->_graph_id_index_map ) {
-            ss << "graph id [" << pair.first << "] index [" << pair.second << "]\n";
-        }
-        ss << "\n\n";
-        return ss.str();
-    }
+    void insertGraphIdIndexMap( const int graph_id, const int index ); 
+    int getGraphIndex( const int graph_id ); 
+    std::string showGraphIdIndexMap(); 
 
     void setLegend( std::shared_ptr<QCPLegend> legend ) { this->_legend = legend; }
     std::shared_ptr<QCPLegend> Legend() { return this->_legend; }
-    // std::shared_ptr<QCPLegend> &LegendRef() { return this->_legend; }
 
     void insertLegendItem( std::shared_ptr<QCPPlottableLegendItem> legend_item ) { this->_legend_items.push_back(legend_item); }
     std::vector< std::shared_ptr<QCPPlottableLegendItem> > LegendItems() { return this->_legend_items; }
@@ -482,13 +479,13 @@ public: // accessors
 
 
 /**
- * @brief Real-time monitor class for multiple graphs, plots and windows based on QT5 and QCustomPlot. 
+ * @brief Real-time display class for multiple graphs, plots and windows based on QT5 and QCustomPlot. 
  * 
  */
-class QCP_Monitor : public QObject
+class DisplayRT : public QObject
 {
     // Q_OBJECT
-public: // data structure
+public: // data types
     using PenProperty = QCP_Pen_Property;
     using GraphProperty = QCP_Graph_Property; 
     using AxisProperty = QCP_Axis_Property;
@@ -502,14 +499,19 @@ public: // data structure
 
 public: // major functions
     
-    QCP_Monitor( 
-        const std::shared_ptr<QCP_Monitor_Property> monitor_property
+    /**
+     * @brief Constructor for DisplayRT
+     * 
+     * @param monitor_property property for display
+     */
+    DisplayRT( 
+        const std::shared_ptr<DisplayRT_Property> monitor_property
     );
 
-    ~QCP_Monitor() {};
+    ~DisplayRT() {};
 
     /**
-     * @brief Initialize the monitor with command line arguments. 
+     * @brief Initialize the display with command line arguments. 
      * Multiple windows, plots, axes and graphs are created based on the monitor property. 
      * 
      * @param argc 
@@ -519,7 +521,7 @@ public: // major functions
     Status Initial( int argc, char *argv[] );
 
     /**
-     * @brief Setup the monitor with signal-slot connections. 
+     * @brief Setup the display with signal-slot connections. 
      * It can be overrided for customized setup.
      * 
      * @return Status 
@@ -536,7 +538,7 @@ public: // major functions
     virtual Status UpdateMonitor(); 
 
 protected: // internal variables
-    std::shared_ptr<QCP_Monitor_Property> _monitor_property;
+    std::shared_ptr<DisplayRT_Property> _monitor_property;
 
     std::shared_ptr<QApplication> _app; // Qt application
     std::vector<std::shared_ptr<QCP_Window>> _windows; // collection of all Qt windows
@@ -556,10 +558,10 @@ protected: // internal methods
 
     // Status CreateGraph( const GraphProperty &graph_property, const std::shared_ptr<QCustomPlot> &plot );
 
-}; // class QCP_Monitor
+}; // class DisplayRT
 
 
-}//  namespace rt_display
+}//  namespace display_rt
 
 
 

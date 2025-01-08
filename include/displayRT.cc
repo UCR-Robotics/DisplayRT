@@ -34,9 +34,9 @@
 #include <QtWidgets/QGridLayout>
 #include <QtCore/QTimer>
 
-#include "rt_display.h"
+#include "displayRT.h"
 
-namespace rt_display {
+namespace display_rt {
 
 /*****************************/
 /******** Pen Property *******/
@@ -233,7 +233,7 @@ QCP_Window_Property::QCP_Window_Property(
 /******** Monitor Property *******/
 /*********************************/
 
-QCP_Monitor_Property::QCP_Monitor_Property( 
+DisplayRT_Property::DisplayRT_Property( 
     const int id,
     const int window_count,
     const std::vector< std::shared_ptr<QCP_Window_Property>> &window_properties
@@ -243,9 +243,9 @@ QCP_Monitor_Property::QCP_Monitor_Property(
 {
 }
 
-/***************************/
-/******** QCP Window *******/
-/***************************/
+/**********************************/
+/******** QCP-based Objects *******/
+/**********************************/
 
 // QCP_Window::QCP_Window( 
 //     const int id
@@ -253,27 +253,93 @@ QCP_Monitor_Property::QCP_Monitor_Property(
 // : QMainWindow(), _id(id)
 // {}
 
+QCP_Window::QCP_Window( 
+    const int id
+)
+: _id(id)
+{
+    // window
+    this->_window = std::make_shared<QMainWindow>();
+    // central widget
+    this->_centralWidget = std::make_shared<QWidget>( this->_window.get() );
+    this->_layout = std::make_shared<QGridLayout>(this->_centralWidget.get());
+}
+
+QCP_Plot::QCP_Plot( 
+    const int id, 
+    std::shared_ptr<QCP_Window> window
+) 
+: _id(id), _parent_window(window) 
+{
+    this->_plot = std::make_shared<QCustomPlot>( window->Window().get() );
+    this->_axes.clear();
+}
+
+QCP_Axis::QCP_Axis( 
+    const int id, 
+    std::shared_ptr<QCP_Plot> plot
+) 
+: _id(id), _parent_plot(plot) 
+{
+    this->_axis = std::make_shared<QCPAxisRect>( this->_parent_plot->Plot().get() );
+    
+    // clear
+    this->_graph_id_index_map.clear();
+    this->_legend_items.clear();
+}
+
+void QCP_Axis::insertGraphIdIndexMap( const int graph_id, const int index ) 
+{ 
+    // check if graph id exists
+    if ( this->_graph_id_index_map.find(graph_id) != this->_graph_id_index_map.end() ) {
+        // if exists, update
+        this->_graph_id_index_map[graph_id] = index; 
+        return;
+    }
+    this->_graph_id_index_map[graph_id] = index; 
+}
+
+int QCP_Axis::getGraphIndex( const int graph_id ) 
+{ 
+    // check if graph id exists
+    if ( this->_graph_id_index_map.find(graph_id) != this->_graph_id_index_map.end() ) {
+        // if exists, return
+        return this->_graph_id_index_map[graph_id]; 
+    }
+    return -1;
+}
+
+std::string QCP_Axis::showGraphIdIndexMap() 
+{
+    std::stringstream ss;
+    for ( const auto &pair : this->_graph_id_index_map ) {
+        ss << "graph id [" << pair.first << "] index [" << pair.second << "]\n";
+    }
+    ss << "\n\n";
+    return ss.str();
+}
+
 /**********************************/
-/******** Monitor Interface *******/
+/******** Display Interface *******/
 /**********************************/
 
-QCP_Monitor::QCP_Monitor( 
-    const std::shared_ptr<QCP_Monitor_Property> monitor_property 
+DisplayRT::DisplayRT( 
+    const std::shared_ptr<DisplayRT_Property> monitor_property 
 )
 : _monitor_property(monitor_property)
 {
 }
 
-QCP_Monitor::Status QCP_Monitor::Initial( int argc, char *argv[] )
+DisplayRT::Status DisplayRT::Initial( int argc, char *argv[] )
 {
     { // debug
-        std::cout << "\nQCP_Monitor: Initialization starts\n";
+        std::cout << "\nDisplayRT: Initialization starts\n";
     }
     
     // safety check
     if ( this->_monitor_property->WindowProperties().size() != this->_monitor_property->WindowCount() ) {
         std::stringstream ss;
-        ss << "\n\nQCP_Monitor: invalid window count [" << this->_monitor_property->WindowCount() << "]\n\n";
+        ss << "\n\nDisplayRT: invalid window count [" << this->_monitor_property->WindowCount() << "]\n\n";
         throw std::runtime_error(ss.str());
         return Status::ERROR;
     }
@@ -287,7 +353,7 @@ QCP_Monitor::Status QCP_Monitor::Initial( int argc, char *argv[] )
         auto window = this->CreateWindow( window_property );
         if ( window == nullptr ) {
             std::stringstream ss;
-            ss << "\n\nQCP_Monitor: window " << window_property->Id() << " failed to create\n\n";
+            ss << "\n\nDisplayRT: window " << window_property->Id() << " failed to create\n\n";
             throw std::runtime_error(ss.str());
             return Status::ERROR;
         } 
@@ -328,16 +394,16 @@ QCP_Monitor::Status QCP_Monitor::Initial( int argc, char *argv[] )
     // dataTimer->start(500); // Update every 500 ms
 
     { // debug
-        std::cout << "\nQCP_Monitor: Initialization finishes\n";
+        std::cout << "\nDisplayRT: Initialization finishes\n";
     }
 
     return Status::NORMAL; 
 }
 
-QCP_Monitor::Status QCP_Monitor::Setup()
+DisplayRT::Status DisplayRT::Setup()
 {
     { // debug
-        std::cout << "\nQCP_Monitor: Setup starts\n";
+        std::cout << "\nDisplayRT: Setup starts\n";
     }
 
     QTimer *dataTimer = new QTimer( this->_app.get() );
@@ -397,21 +463,21 @@ QCP_Monitor::Status QCP_Monitor::Setup()
     //         }
     //     }
     // } ); 
-    QObject::connect( dataTimer, &QTimer::timeout, this, &QCP_Monitor::UpdateMonitor );
-    // QObject::connect( dataTimer, SIGNAL(QTimer::timeout()), this, SLOT(QCP_Monitor::UpdateMonitor()) );
+    QObject::connect( dataTimer, &QTimer::timeout, this, &DisplayRT::UpdateMonitor );
+    // QObject::connect( dataTimer, SIGNAL(QTimer::timeout()), this, SLOT(DisplayRT::UpdateMonitor()) );
     dataTimer->start(100); // Update every 100 ms
     
     { // debug
-        std::cout << "\nQCP_Monitor: Setup finishes\n";
+        std::cout << "\nDisplayRT: Setup finishes\n";
     }
 
     return Status::NORMAL; 
 }
 
-QCP_Monitor::Status QCP_Monitor::Start() 
+DisplayRT::Status DisplayRT::Start() 
 { 
     // { // debug
-    //     std::cout << "\nQCP_Monitor: Start windows display\n";
+    //     std::cout << "\nDisplayRT: Start windows display\n";
     // }
     
     // for ( auto &window : this->_windows )
@@ -420,7 +486,7 @@ QCP_Monitor::Status QCP_Monitor::Start()
     // }
 
     { // debug
-        std::cout << "\nQCP_Monitor: Start QT application\n";
+        std::cout << "\nDisplayRT: Start QT application\n";
     }
     
     this->_app->exec(); 
@@ -428,7 +494,7 @@ QCP_Monitor::Status QCP_Monitor::Start()
     return Status::NORMAL; 
 }
 
-QCP_Monitor::Status QCP_Monitor::UpdateMonitor()
+DisplayRT::Status DisplayRT::UpdateMonitor()
 {
     for ( auto window : this->_windows )
     {
@@ -481,20 +547,20 @@ QCP_Monitor::Status QCP_Monitor::UpdateMonitor()
     return Status::NORMAL;
 }
 
-std::shared_ptr<QCP_Window> QCP_Monitor::CreateWindow( 
+std::shared_ptr<QCP_Window> DisplayRT::CreateWindow( 
     const std::shared_ptr<WindowProperty> window_property 
 )
 {
     { // debug
         #if DEBUG_LEVEL > 0
-        std::cout << "\nQCP_Monitor: Create window " << window_property->Id() << " starts\n";
+        std::cout << "\nDisplayRT: Create window " << window_property->Id() << " starts\n";
         #endif
     }
     
     // safety check
     if ( window_property->PlotProperties().size() != window_property->PlotCount() ) {
         std::stringstream ss;
-        ss << "\n\nQCP_Monitor: window " << window_property->Id() << " has invalid plot count [" << window_property->PlotCount() << "]\n\n";
+        ss << "\n\nDisplayRT: window " << window_property->Id() << " has invalid plot count [" << window_property->PlotCount() << "]\n\n";
         throw std::runtime_error(ss.str());
         return nullptr;
     }
@@ -512,7 +578,7 @@ std::shared_ptr<QCP_Window> QCP_Monitor::CreateWindow(
         if ( plot == nullptr ) 
         {
             std::stringstream ss;
-            ss << "\n\nQCP_Monitor: window " << window_property->Id() << " plot " << plot_property->Id() << " failed to create\n\n";
+            ss << "\n\nDisplayRT: window " << window_property->Id() << " plot " << plot_property->Id() << " failed to create\n\n";
             throw std::runtime_error(ss.str());
             return nullptr;
         } 
@@ -557,28 +623,28 @@ std::shared_ptr<QCP_Window> QCP_Monitor::CreateWindow(
 
     { // debug
         #if DEBUG_LEVEL > 0
-        std::cout << "\nQCP_Monitor: Create window " << window_property->Id() << " finishes\n";
+        std::cout << "\nDisplayRT: Create window " << window_property->Id() << " finishes\n";
         #endif
     }
 
     return window; 
 }
 
-std::shared_ptr<QCP_Plot> QCP_Monitor::CreatePlot( 
-    const std::shared_ptr<QCP_Monitor::PlotProperty> plot_property, 
+std::shared_ptr<QCP_Plot> DisplayRT::CreatePlot( 
+    const std::shared_ptr<DisplayRT::PlotProperty> plot_property, 
     std::shared_ptr<QCP_Window> window 
 )
 {
     { // debug
         #if DEBUG_LEVEL > 0
-        std::cout << "\nQCP_Monitor: Create plot " << plot_property->Id() << " starts\n";
+        std::cout << "\nDisplayRT: Create plot " << plot_property->Id() << " starts\n";
         #endif
     }
 
     // safety check
     if ( plot_property->AxisProperties().size() != plot_property->AxisCount() ) {
         std::stringstream ss;
-        ss << "\n\nQCP_Monitor: window " << window->Id() << " plot " << plot_property->Id() << " has invalid axis count [" << plot_property->AxisCount() << "]\n\n";
+        ss << "\n\nDisplayRT: window " << window->Id() << " plot " << plot_property->Id() << " has invalid axis count [" << plot_property->AxisCount() << "]\n\n";
         throw std::runtime_error(ss.str());
         return nullptr;
     }
@@ -604,7 +670,7 @@ std::shared_ptr<QCP_Plot> QCP_Monitor::CreatePlot(
         auto axis = this->CreateAxis( axis_property, plot );
         if ( axis == nullptr ) {
             std::stringstream ss;
-            ss << "\n\nQCP_Monitor: window " << window->Id() << " plot " << plot_property->Id() << " axis " << axis_property->Id() << " failed to create\n\n";
+            ss << "\n\nDisplayRT: window " << window->Id() << " plot " << plot_property->Id() << " axis " << axis_property->Id() << " failed to create\n\n";
             throw std::runtime_error(ss.str());
             return nullptr;
         } 
@@ -682,28 +748,28 @@ std::shared_ptr<QCP_Plot> QCP_Monitor::CreatePlot(
 
     { // debug
         #if DEBUG_LEVEL > 0
-        std::cout << "\nQCP_Monitor: Create plot " << plot_property->Id() << " finishes\n";
+        std::cout << "\nDisplayRT: Create plot " << plot_property->Id() << " finishes\n";
         #endif
     }
 
     return plot; 
 }
 
-std::shared_ptr<QCP_Axis> QCP_Monitor::CreateAxis( 
-    const std::shared_ptr<QCP_Monitor::AxisProperty> axis_property, 
+std::shared_ptr<QCP_Axis> DisplayRT::CreateAxis( 
+    const std::shared_ptr<DisplayRT::AxisProperty> axis_property, 
     std::shared_ptr<QCP_Plot> plot 
 )
 {
     { // debug
         #if DEBUG_LEVEL > 0
-        std::cout << "\nQCP_Monitor: Create axis " << axis_property->Id() << " starts\n";
+        std::cout << "\nDisplayRT: Create axis " << axis_property->Id() << " starts\n";
         #endif
     }
 
     // safety check
     if ( axis_property->GraphProperties().size() != axis_property->GraphCount() ) {
         std::stringstream ss;
-        ss << "\n\nQCP_Monitor: window " << plot->ParentWindow()->Id() << " plot " << plot->Id() << " axis " << axis_property->Id() << " has invalid graph count [" << axis_property->GraphCount() << "]\n\n";
+        ss << "\n\nDisplayRT: window " << plot->ParentWindow()->Id() << " plot " << plot->Id() << " axis " << axis_property->Id() << " has invalid graph count [" << axis_property->GraphCount() << "]\n\n";
         throw std::runtime_error(ss.str());
         return nullptr;
     }
@@ -724,7 +790,7 @@ std::shared_ptr<QCP_Axis> QCP_Monitor::CreateAxis(
     }
     else {
         std::stringstream ss;
-        ss << "\n\nQCP_Monitor: window " << plot->ParentWindow()->Id() << " plot " << plot->Id() << " axis " << axis_property->Id() << " has invalid y-axis range\n\n";
+        ss << "\n\nDisplayRT: window " << plot->ParentWindow()->Id() << " plot " << plot->Id() << " axis " << axis_property->Id() << " has invalid y-axis range\n\n";
         throw std::runtime_error(ss.str());
         return nullptr;
     }
@@ -806,7 +872,7 @@ std::shared_ptr<QCP_Axis> QCP_Monitor::CreateAxis(
 
     // { // debug
     //     std::stringstream ss;
-    //     ss << "\n\nQCP_Monitor: window " << plot->ParentWindow()->Id() << " plot " << plot->Id() << " axis " << axis->Id() << " created\n";
+    //     ss << "\n\nDisplayRT: window " << plot->ParentWindow()->Id() << " plot " << plot->Id() << " axis " << axis->Id() << " created\n";
     //     ss << "graph count = " << axis->Axis()->graphs().size() << "\n";
     //     ss << "graph count from plot = " << plot->Plot()->graphCount() << "\n";
     //     // ss << "legend item count = " << static_cast<int>( axis->LegendItems().size() ) << "\n";
@@ -832,7 +898,7 @@ std::shared_ptr<QCP_Axis> QCP_Monitor::CreateAxis(
 
     { // debug
         #if DEBUG_LEVEL > 0
-        std::cout << "\nQCP_Monitor: Create axis " << axis_property->Id() << " finishes\n";
+        std::cout << "\nDisplayRT: Create axis " << axis_property->Id() << " finishes\n";
         #endif
     }
 
@@ -840,7 +906,7 @@ std::shared_ptr<QCP_Axis> QCP_Monitor::CreateAxis(
 }
 
 
-}//  namespace rt_display
+}//  namespace display_rt
 
 
 

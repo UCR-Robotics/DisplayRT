@@ -163,12 +163,12 @@ find_package(QCustomPlot REQUIRED)
 # )
 
 set(LIB_DISPLAYRT_HEADERS 
-    "${DISPLAY_RT_DIR}/include/rt_display.h" 
+    "${DISPLAY_RT_DIR}/include/displayRT.h" 
     # "${SCIQ_UTIL_DIR}/include/sciq2_monitor.h"
 )
 
 set(LIB_DISPLAYRT_SOURCES 
-    "${DISPLAY_RT_DIR}/include/rt_display.cc" 
+    "${DISPLAY_RT_DIR}/include/displayRT.cc" 
     # "${SCIQ_UTIL_DIR}/include/sciq2_monitor.cc"
 )
 
