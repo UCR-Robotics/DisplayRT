@@ -12,28 +12,28 @@ else
     echo -e "\e[32mEntered $(pwd).\e[0m"
 fi
 
-# copy the qcustomplot.cpp.skeleton and qcustomplot.h.skeleton files 
-#       to qcustomplot.cpp and qcustomplot.h
-cp src/qcustomplot.cpp.skeleton qcustomplot.cpp
-cp src/qcustomplot.h.skeleton qcustomplot.h
+# # copy the qcustomplot.cpp.skeleton and qcustomplot.h.skeleton files 
+# #       to qcustomplot.cpp and qcustomplot.h
+# cp src/qcustomplot.cpp.skeleton qcustomplot.cpp
+# cp src/qcustomplot.h.skeleton qcustomplot.h
 
-# check if sharedlib/sharedlib-compilation/sharedlib-compilation.pro exist 
-# and copy it to sharedlib-compilation.pro
-if [ ! -f "$(pwd)/sharedlib/sharedlib-compilation/sharedlib-compilation.pro" ]; then
-    echo -e "\e[31mThe sharedlib/sharedlib-compilation/sharedlib-compilation.pro file does not exist in the current path. Please make sure you are in the correct directory.\e[0m"
-    exit 1
-else
-    cp sharedlib/sharedlib-compilation/sharedlib-compilation.pro ./sharedlib-compilation.pro
-    echo -e "\e[32msharedlib/sharedlib-compilation/sharedlib-compilation.pro copied to sharedlib-compilation.pro.\e[0m"
-fi
+# # check if sharedlib/sharedlib-compilation/sharedlib-compilation.pro exist 
+# # and copy it to sharedlib-compilation.pro
+# if [ ! -f "$(pwd)/sharedlib/sharedlib-compilation/sharedlib-compilation.pro" ]; then
+#     echo -e "\e[31mThe sharedlib/sharedlib-compilation/sharedlib-compilation.pro file does not exist in the current path. Please make sure you are in the correct directory.\e[0m"
+#     exit 1
+# else
+#     cp sharedlib/sharedlib-compilation/sharedlib-compilation.pro ./sharedlib-compilation.pro
+#     echo -e "\e[32msharedlib/sharedlib-compilation/sharedlib-compilation.pro copied to sharedlib-compilation.pro.\e[0m"
+# fi
 
-# modify the sharedlib-compilation.pro file:
-# replace the last two lines "SOURCES += ../../qcustomplot.cpp" and "HEADERS += ../../qcustomplot.h"
-#                       with "SOURCES += qcustomplot.cpp" and "HEADERS += qcustomplot.h"
-# append the target output directory "DESTDIR = $$PWD/lib"
-sed -i 's|SOURCES += ../../qcustomplot.cpp|SOURCES += qcustomplot.cpp|' sharedlib-compilation.pro
-sed -i 's|HEADERS += ../../qcustomplot.h|HEADERS += qcustomplot.h|' sharedlib-compilation.pro
-echo 'DESTDIR = $$PWD/lib' >> sharedlib-compilation.pro
+# # modify the sharedlib-compilation.pro file:
+# # replace the last two lines "SOURCES += ../../qcustomplot.cpp" and "HEADERS += ../../qcustomplot.h"
+# #                       with "SOURCES += qcustomplot.cpp" and "HEADERS += qcustomplot.h"
+# # append the target output directory "DESTDIR = $$PWD/lib"
+# sed -i 's|SOURCES += ../../qcustomplot.cpp|SOURCES += qcustomplot.cpp|' sharedlib-compilation.pro
+# sed -i 's|HEADERS += ../../qcustomplot.h|HEADERS += qcustomplot.h|' sharedlib-compilation.pro
+# echo 'DESTDIR = $$PWD/lib' >> sharedlib-compilation.pro
 
 # Check if the /build directory exists in the current path
 if [ ! -d "$(pwd)/build" ]; then
@@ -52,11 +52,11 @@ echo -e "\e[32mEntered $(pwd).\e[0m"
 qmake ..
 make
 
-# remove sharedlib-compilation.pro
-rm ../sharedlib-compilation.pro
-# remove .so with version number
-rm -f ../lib/libqcustomplot.so.*
-rm -f ../lib/libqcustomplotd.so.*
+# # remove sharedlib-compilation.pro
+# rm ../sharedlib-compilation.pro
+# # remove .so with version number
+# rm -f ../lib/libqcustomplot.so.*
+# rm -f ../lib/libqcustomplotd.so.*
 
 # Return to the original path
 cd $current_path
