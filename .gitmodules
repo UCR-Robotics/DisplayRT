@@ -1,3 +1,6 @@
 [submodule "thirdparty/QCustomPlot"]
 	path = thirdparty/QCustomPlot
 	url = git@gitlab.com:ecme2/QCustomPlot.git
+[submodule "thirdparty/mini-yaml"]
+	path = thirdparty/mini-yaml
+	url = https://github.com/jimmiebergmann/mini-yaml.git
