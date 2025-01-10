@@ -73,6 +73,11 @@
         "unordered_set": "cpp",
         "optional": "cpp",
         "span": "cpp",
-        "variant": "cpp"
+        "variant": "cpp",
+        "strstream": "cpp",
+        "filesystem": "cpp",
+        "cfenv": "cpp",
+        "typeindex": "cpp",
+        "valarray": "cpp"
     }
 }

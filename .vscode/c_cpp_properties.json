@@ -11,7 +11,8 @@
                 // "/usr/local/webots/include/controller/cpp/",
                 "/usr/include/x86_64-linux-gnu/qt5", 
                 "/usr/include/x86_64-linux-gnu/qt5/QtCore",
-                "${workspaceFolder}/thirdparty/QCustomPlot/" 
+                "${workspaceFolder}/thirdparty/QCustomPlot/", 
+                "${workspaceFolder}/thirdparty/mini-yaml/yaml/" 
                 // "/usr/include/x86_64-linux-gnu/qt5/QtWidgets"
             ],
             "defines": [],

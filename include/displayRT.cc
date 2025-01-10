@@ -905,6 +905,19 @@ std::shared_ptr<QCP_Axis> DisplayRT::CreateAxis(
     return axis; 
 }
 
+Yaml::Node & DisplayRT_ParserBase::getParser(
+  const std::string &config_file_path, 
+  Yaml::Node &parser_in
+) {
+  auto & parser = parser_in;
+  if ( parser.Size() == 0 )
+  { // No parsing yet, do parse
+    Yaml::Parse( parser, config_file_path.c_str() );
+  }
+
+  return parser;
+}
+
 
 }//  namespace display_rt
 

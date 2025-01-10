@@ -1,0 +1,5 @@
+# Add subdirectories
+add_subdirectory(MultiwindowPlotWithQCustomPlot)
+add_subdirectory(MultiwindowPlotWithDisplayRT)
+add_subdirectory(MultiwindowPlotWithParsedDisplayRT)
+# add_subdirectory(src)

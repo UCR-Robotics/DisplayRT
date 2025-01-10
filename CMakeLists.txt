@@ -164,16 +164,18 @@ find_package(QCustomPlot REQUIRED)
 
 set(LIB_DISPLAYRT_HEADERS 
     "${DISPLAY_RT_DIR}/include/displayRT.h" 
-    # "${SCIQ_UTIL_DIR}/include/sciq2_monitor.h"
 )
 
 set(LIB_DISPLAYRT_SOURCES 
     "${DISPLAY_RT_DIR}/include/displayRT.cc" 
-    # "${SCIQ_UTIL_DIR}/include/sciq2_monitor.cc"
 )
 
-# set(LIB_MINIYAML_HEADERS "${SCIQ_DIR}/mini-yaml/Yaml.hpp")
-# set(LIB_MINIYAML_SOURCES "${SCIQ_DIR}/mini-yaml/Yaml.cpp")
+set(LIB_MINIYAML_HEADERS 
+    "${DISPLAY_RT_DIR}/thirdparty/mini-yaml/yaml/Yaml.hpp"
+)
+set(LIB_MINIYAML_SOURCES 
+    "${DISPLAY_RT_DIR}/thirdparty/mini-yaml/yaml/Yaml.cpp"
+)
 
 # Create Library
 add_library(displayrt SHARED 
@@ -183,7 +185,7 @@ add_library(displayrt SHARED
     # ${LIB_SCIQ2_COMM_UTIL_HEADERS} ${LIB_SCIQ2_COMM_UTIL_SOURCES}
     # ${LIB_SCIQ2_LCM_HEADERS}
     ${LIB_DISPLAYRT_HEADERS} ${LIB_DISPLAYRT_SOURCES} 
-    # ${LIB_MINIYAML_HEADERS} ${LIB_MINIYAML_SOURCES}
+    ${LIB_MINIYAML_HEADERS} ${LIB_MINIYAML_SOURCES}
 )
 
 target_link_libraries(displayrt PUBLIC 
@@ -196,6 +198,7 @@ target_link_libraries(displayrt PUBLIC
 target_include_directories(displayrt PUBLIC 
     # ${SCIQ_DIR}/include 
     ${DISPLAY_RT_DIR}/include 
+    ${DISPLAY_RT_DIR}/thirdparty/mini-yaml/yaml 
     # ${EIGEN_INCLUDE_DIR} 
     # ${TINYFSM_INCLUDE_DIR} 
     # ${LCM_INCLUDE_DIR} 
@@ -242,5 +245,6 @@ set_target_properties(displayrt
 
 
 # Add subdirectories
-add_subdirectory(test)
+# add_subdirectory(test)
+add_subdirectory(example)
 # add_subdirectory(src)

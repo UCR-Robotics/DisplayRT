@@ -41,6 +41,9 @@
 // QCustomPlot
 #include "qcustomplot.h"
 
+// mini-yaml
+#include "Yaml.hpp"
+
 // #include "parser/abstraction_parser.h"
 
 namespace display_rt {
@@ -560,6 +563,27 @@ protected: // internal methods
 
 }; // class DisplayRT
 
+/***********************/
+/******** Parser *******/
+/***********************/
+
+class DisplayRT_ParserBase {
+public: // types
+
+public: // major methods and implementations of virtual methods
+
+    DisplayRT_ParserBase() {}
+
+    Yaml::Node & getParser(
+      const std::string &config_file_path, 
+      Yaml::Node &parser_in
+    ); 
+
+    virtual std::shared_ptr<DisplayRT_Property> parseConfiguration(
+      const std::string &config_file_path, Yaml::Node &parser_in
+    ) = 0; 
+
+}; // SCIQ2_Monitor_Parser_QCP
 
 }//  namespace display_rt
 
