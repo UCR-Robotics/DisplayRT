@@ -8,7 +8,7 @@ It is essentially an abstraction class named **DisplayRT** that can be coordinat
 Ubuntu 20.04 LTS and 22.04 LTS
 
 - **QT5**: the dependencies can be installed via the command ```sudo apt install qtbase5-dev qt5-qmake qtbase5-dev-tools libqt5widgets5```. 
-- **QCustomPlot**: the submodule (v2.1.0) is included in the folder */thirdparty/QCustomPlot*. Run setup_QCustomPlot.sh for library compilation. 
+- **QCustomPlot**: the source code (v2.1.0) is included in the folder */thirdparty/QCustomPlot*. Run setup_QCustomPlot.sh for library compilation. 
 - **mini-yaml**: the submodule (main) is included in the folder */thirdparty/mini-plot*. 
 
 
@@ -24,5 +24,5 @@ You can also compile it as a normal CMake project.
 
 ## Acknowledgments
 This project includes the following third-party components:
-- [QCustomPlot](git@gitlab.com:ecme2/QCustomPlot.git), licensed under the GPL License. See `thirdparty/QCustomPlot/GPL.txt` for details.
+- [QCustomPlot](git@gitlab.com:ecme2/QCustomPlot.git), licensed under the GPL License. See `thirdparty/QCustomPlot/GPL.txt` for details. Source code can be downloaded [here](https://www.qcustomplot.com/index.php/download). 
 - [mini-yaml](https://github.com/jimmiebergmann/mini-yaml.git), licensed under the MIT License. See `thirdparty/mini-yaml/LICENSE` for details.
