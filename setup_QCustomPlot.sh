@@ -1,5 +1,17 @@
 #!/bin/bash
 
+# check if libqcustomplot.so file exists in the /thirdparty/QCustomPlot/lib directory
+if [ -f "$(pwd)/thirdparty/QCustomPlot/lib/libqcustomplot.so" ]; then
+    echo -e "\e[32mThe libqcustomplot.so file exists in the /thirdparty/QCustomPlot/lib directory.\e[0m"
+    exit 0
+else
+    echo -e "\e[32mThe libqcustomplot.so file does not exist in the /thirdparty/QCustomPlot/lib directory. Start compiling the QCustomPlot library.\e[0m"
+fi
+
+
+# # QT5 
+# sudo apt install g++ make cmake qtbase5-dev qt5-qmake qtbase5-dev-tools libqt5widgets5v qtwayland5
+
 # Safe the current path for later use
 current_path=$(pwd)
 
