@@ -1,7 +1,7 @@
 #!/bin/bash
 
 # QT5 
-sudo apt install g++ make cmake qtbase5-dev qt5-qmake qtbase5-dev-tools libqt5widgets5v qtwayland5
+sudo apt install g++ make cmake qtbase5-dev qt5-qmake qtbase5-dev-tools libqt5widgets5 qtwayland5
 
 # compile QCustomPlot by running setup_QCustomPlot.sh
 ./setup_QCustomPlot.sh
