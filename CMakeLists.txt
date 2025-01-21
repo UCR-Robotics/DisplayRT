@@ -13,7 +13,7 @@ message(STATUS "Target platform: " ${CMAKE_SYSTEM_NAME})
 message(STATUS "Target system root: " ${CMAKE_SYSROOT})
 set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -std=c++17")
 
-set(DEBUG_LEVEL "1") # debug level, 0: no debug, 1: basic debug, 2: detailed debug
+set(DEBUG_LEVEL "0") # debug level, 0: no debug, 1: basic debug, 2: detailed debug
 add_definitions(-DDEBUG_LEVEL=${DEBUG_LEVEL})
 message(STATUS "Debug Level: " ${DEBUG_LEVEL})
 

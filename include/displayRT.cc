@@ -335,7 +335,9 @@ DisplayRT::DisplayRT(
 DisplayRT::Status DisplayRT::Initial( int argc, char *argv[] )
 {
     { // debug
+        #if DEBUG_LEVEL > 0
         std::cout << "\nDisplayRT: Initialization starts\n";
+        #endif
     }
     
     // safety check
@@ -366,7 +368,9 @@ DisplayRT::Status DisplayRT::Initial( int argc, char *argv[] )
 
 
     { // debug
+        #if DEBUG_LEVEL > 0
         std::cout << "\nDisplayRT: Initialization finishes\n";
+        #endif
     }
 
     return Status::NORMAL; 
@@ -375,7 +379,9 @@ DisplayRT::Status DisplayRT::Initial( int argc, char *argv[] )
 DisplayRT::Status DisplayRT::defaultSetupDisplay()
 {
     { // debug
+        #if DEBUG_LEVEL > 0
         std::cout << "\nDisplayRT: Setup starts\n";
+        #endif
     }
 
     QTimer *dataTimer = new QTimer( this->_app.get() );
@@ -383,7 +389,9 @@ DisplayRT::Status DisplayRT::defaultSetupDisplay()
     dataTimer->start(100); // Update every 100 ms
     
     { // debug
+        #if DEBUG_LEVEL > 0
         std::cout << "\nDisplayRT: Setup finishes\n";
+        #endif
     }
 
     return Status::NORMAL; 
@@ -392,7 +400,9 @@ DisplayRT::Status DisplayRT::defaultSetupDisplay()
 DisplayRT::Status DisplayRT::Start() 
 { 
     { // debug
+        #if DEBUG_LEVEL > 0
         std::cout << "\nDisplayRT: Start QT application\n";
+        #endif
     }
     
     this->_app->exec(); 
@@ -499,35 +509,6 @@ std::shared_ptr<QCP_Window> DisplayRT::CreateWindow(
     // window->Window()->resize(window_property->Width(), window_property->Height());
     window->Window()->setGeometry(window_property->Px(), window_property->Py(), window_property->Width(), window_property->Height());
 
-    // // test: signal
-    // QTimer *dataTimer = new QTimer(window->Window().get());
-    // QObject::connect(dataTimer, &QTimer::timeout, [window]() {
-    //     static double t = 0;
-    //     t += 0.1;
-
-    //     for ( auto &plot : window->Plots() ) 
-    //     {
-    //         for ( int i = 0; i < plot->Axes().size(); i++ )             
-    //         {
-    //             auto axis = plot->Axes()[i];
-    //             const auto xgap = axis->XGap();
-
-    //             for ( int j = 0; j < axis->Axis()->graphs().size(); j++ ) 
-    //             {
-    //                 axis->Axis()->graphs()[j]->addData(t, std::sin( t + static_cast<double>( M_PI_4 * j ) ) );
-    //                 if ( (t-xgap) > 0.0 )
-    //                     axis->Axis()->graphs()[j]->data()->removeBefore(t-xgap);
-    //             }
-
-    //             if ( (t-xgap) > 0.0 )
-    //                 axis->Axis()->axis(QCPAxis::atBottom)->setRange(t - xgap, t);
-    //         }
-            
-    //         plot->Plot()->replot();
-    //     }
-    // });
-    // dataTimer->start(500); // Update every 500 ms
-
     { // debug
         #if DEBUG_LEVEL > 0
         std::cout << "\nDisplayRT: Create window " << window_property->Id() << " finishes\n";
@@ -606,53 +587,6 @@ std::shared_ptr<QCP_Plot> DisplayRT::CreatePlot(
         }
     }
 
-    // // test: signal
-    // QTimer *dataTimer = new QTimer(plot->Plot().get());
-    // QObject::connect(dataTimer, &QTimer::timeout, [plot]() {
-    //     static double t = 0;
-    //     t += 0.1;
-
-    //     // { //debug
-    //     //     std::cout << "plot " << plot->Id() << " axis count = " << plot->Axes().size() << "\n";
-    //     // }
-    //     for ( int i = 0; i < plot->Axes().size(); i++ ) 
-    //     {
-    //         // { // debug
-    //         //     std::cout << "plot " << plot->Id() << " axis " << i << " graph count = " << plot->Axes()[i]->Axis()->graphs().size() << "\n";
-    //         // }
-            
-    //         auto axis = plot->Axes()[i];
-    //         const auto xgap = axis->XGap();
-
-    //         for ( int j = 0; j < axis->Axis()->graphs().size(); j++ ) 
-    //         {
-    //             axis->Axis()->graphs()[j]->addData(t, std::sin( t + static_cast<double>( M_PI_4 * j ) ) );
-    //             // if ( (t-xgap) > 0.0 )
-    //                 axis->Axis()->graphs()[j]->data()->removeBefore(t-xgap);
-
-    //             { // debug
-    //                 std::cout << "window " << plot->ParentWindow()->Id() << " plot " << plot->Id() << " axis " << i << " graph " << j << " replotted\n"; 
-    //                         //   << "t = " << t << ", xgap = " << xgap << "\n";
-    //             }
-    //         }
-
-    //         // if ( (t-xgap) > 0.0 )
-    //             axis->Axis()->axis(QCPAxis::atBottom)->setRange(t - xgap, t);
-            
-    //         { //debug
-    //             std::cout << "window " << plot->ParentWindow()->Id() << " plot " << plot->Id() << " axis " << i << " replotted: "
-    //                       << "t = " << t << ", xgap = " << xgap << "\n";
-    //         }
-    //     }
-
-    //     plot->Plot()->replot();
-
-    //     { // debug
-    //         std::cout << "window " << plot->ParentWindow()->Id() << " plot " << plot->Id() << " replotted\n\n";
-    //     }
-    // });
-    // dataTimer->start(500); // Update every 20 ms
-
     { // debug
         #if DEBUG_LEVEL > 0
         std::cout << "\nDisplayRT: Create plot " << plot_property->Id() << " finishes\n";
@@ -704,14 +638,6 @@ std::shared_ptr<QCP_Axis> DisplayRT::CreateAxis(
     // axis->Axis()->axis(QCPAxis::atLeft)->setRange( axis_property->YMin(), axis_property->YMax() );
     // axis->Axis()->axis(QCPAxis::atLeft)->rescale(true); // auto scale
     axis->setXGap( axis_property->XGap() );
-    
-    // // legend
-    // axis->setLegend( std::make_shared<QCPLegend>() );
-    // axis->Axis()->insetLayout()->addElement( axis->Legend().get() , Qt::AlignTop | Qt::AlignRight );
-    // axis->Legend()->setVisible(true);
-    // axis->Legend()->setBrush(QBrush(QColor(255, 255, 255, 150)));
-    // axis->Legend()->setBorderPen(QPen(Qt::black));
-
 
     // setup graphs
     for ( int i = 0; i < axis_property->GraphCount(); i++ ) 
@@ -732,76 +658,7 @@ std::shared_ptr<QCP_Axis> DisplayRT::CreateAxis(
         axis->Axis()->graphs().back()->setName( graph_property->Name() );
 
         axis->insertGraphIdIndexMap( graph_property->Id(), i );
-
-        // legend item
-        
-        // { // debug
-        //     std::cout << "before add legend item " << i <<", legend item count from legend = " << axis->Legend()->itemCount() << "\n";
-        // }
-        
-        // axis->Legend()->addItem( std::make_shared<QCPPlottableLegendItem>( axis->Legend().get(), axis->Axis()->graphs().back() ).get() ); 
-        // axis->insertLegendItem( std::make_shared<QCPPlottableLegendItem>( axis->Legend().get(), axis->Axis()->graphs().back() ) ); 
-        // axis->Legend()->addItem( axis->LegendItems().back().get() );
-        
-        // { // debug
-        //     std::cout << "after add legend item " << i <<", legend item count from legend = " << axis->Legend()->itemCount() << "\n";
-        // }
-
-        // // test: data
-        // QTimer *dataTimer = new QTimer(plot->Plot().get());
-        // QObject::connect(dataTimer, &QTimer::timeout, [&plot, &axis, &axis_property]() {
-        //     const auto xgap = axis_property->XGap();
-            
-        //     static double t = 0;
-        //     t += 0.1;
-
-        //     axis->graphs().back()->addData(t, qSin(t));
-        //     axis->graphs().back()->data()->removeBefore(t-xgap);
-
-        //     plot->replot();
-        // });
-        // dataTimer->start(20); // Update every 20 ms
     }
-
-    // // legend
-    // axis->setLegend( std::make_shared<QCPLegend>() );
-    // axis->Axis()->insetLayout()->addElement( axis->Legend().get() , Qt::AlignTop | Qt::AlignRight );
-    // axis->Legend()->setVisible(true);
-    // axis->Legend()->setBrush(QBrush(QColor(255, 255, 255, 150)));
-    // axis->Legend()->setBorderPen(QPen(Qt::black));
-
-    // for ( int i = 0; i < axis_property->GraphCount(); i++ ) 
-    // {
-    //     axis->insertLegendItem( std::make_shared<QCPPlottableLegendItem>( axis->Legend().get(), axis->Axis()->graphs()[i] ) ); 
-    //     axis->Legend()->addItem( axis->LegendItems().back().get() );
-    // }
-
-
-    // { // debug
-    //     std::stringstream ss;
-    //     ss << "\n\nDisplayRT: window " << plot->ParentWindow()->Id() << " plot " << plot->Id() << " axis " << axis->Id() << " created\n";
-    //     ss << "graph count = " << axis->Axis()->graphs().size() << "\n";
-    //     ss << "graph count from plot = " << plot->Plot()->graphCount() << "\n";
-    //     // ss << "legend item count = " << static_cast<int>( axis->LegendItems().size() ) << "\n";
-    //     // ss << "legend item count from legend = " << axis->_legend->itemCount() << "\n";
-    //     ss << "legend item count from legend = " << axis->Legend()->itemCount() << "\n";
-    //     ss << "legend item count from plot = " << plot->Plot()->legend->itemCount() << "\n";
-    //     ss << "graph ID-Index map = \n" << axis->showGraphIdIndexMap();
-        
-    //     int legendCount = 0;
-    //     { // count legends
-    //         auto insetLayout = axis->Axis()->insetLayout();
-    //         for (int i = 0; i < insetLayout->elementCount(); ++i) {
-    //             if (qobject_cast<QCPLegend *>(insetLayout->elementAt(i))) {
-    //                 ++legendCount;
-    //             }
-    //         }
-    //     }
-    //     ss << "legend count = " << legendCount << "\n";
-        
-        
-    //     std::cout << ss.str();
-    // }
 
     { // debug
         #if DEBUG_LEVEL > 0
