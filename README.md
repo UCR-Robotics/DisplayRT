@@ -2,6 +2,10 @@
 This is a utility program for displaying data stream in soft realtime in multiple windows. 
 This project is originally motivated to visualize data of various types from a mobile robot. 
 
+<div style="text-align: left;">
+  <img src="doc/DisplayRT_example.gif" alt="DisplayRT" width="800"/>
+</div>
+
 # Dependencies
 
 Ubuntu 20.04 LTS and 22.04 LTS
