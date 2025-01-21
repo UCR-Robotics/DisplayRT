@@ -362,36 +362,6 @@ DisplayRT::Status DisplayRT::Initial( int argc, char *argv[] )
         window->Window()->show();
     }
 
-    // QTimer *dataTimer = new QTimer( this->_app.get() );
-    // for ( auto window : this->_windows )
-    // {
-    //     QObject::connect(dataTimer, &QTimer::timeout, [window]() {
-    //         static double t = 0;
-    //         t += 0.1;
-
-    //         for ( auto &plot : window->Plots() ) 
-    //         {
-    //             for ( int i = 0; i < plot->Axes().size(); i++ )             
-    //             {
-    //                 auto axis = plot->Axes()[i];
-    //                 const auto xgap = axis->XGap();
-
-    //                 for ( int j = 0; j < axis->Axis()->graphs().size(); j++ ) 
-    //                 {
-    //                     axis->Axis()->graphs()[j]->addData(t, std::sin( t + static_cast<double>( M_PI_4 * j ) ) );
-    //                     if ( (t-xgap) > 0.0 )
-    //                         axis->Axis()->graphs()[j]->data()->removeBefore(t-xgap);
-    //                 }
-
-    //                 if ( (t-xgap) > 0.0 )
-    //                     axis->Axis()->axis(QCPAxis::atBottom)->setRange(t - xgap, t);
-    //             }
-                
-    //             plot->Plot()->replot();
-    //         }
-    //     });
-    // }
-    // dataTimer->start(500); // Update every 500 ms
 
     { // debug
         std::cout << "\nDisplayRT: Initialization finishes\n";
@@ -400,71 +370,14 @@ DisplayRT::Status DisplayRT::Initial( int argc, char *argv[] )
     return Status::NORMAL; 
 }
 
-DisplayRT::Status DisplayRT::Setup()
+DisplayRT::Status DisplayRT::defaultSetupDisplay()
 {
     { // debug
         std::cout << "\nDisplayRT: Setup starts\n";
     }
 
     QTimer *dataTimer = new QTimer( this->_app.get() );
-    // for ( auto window : this->_windows )
-    // {
-    //     QObject::connect(dataTimer, &QTimer::timeout, [window]() {
-    //         static double t = 0;
-    //         t += 0.1;
-
-    //         for ( auto &plot : window->Plots() ) 
-    //         {
-    //             for ( int i = 0; i < plot->Axes().size(); i++ )             
-    //             {
-    //                 auto axis = plot->Axes()[i];
-    //                 const auto xgap = axis->XGap();
-
-    //                 for ( int j = 0; j < axis->Axis()->graphs().size(); j++ ) 
-    //                 {
-    //                     axis->Axis()->graphs()[j]->addData(t, std::sin( t + static_cast<double>( M_PI_4 * j ) ) );
-    //                     if ( (t-xgap) > 0.0 )
-    //                         axis->Axis()->graphs()[j]->data()->removeBefore(t-xgap);
-    //                 }
-
-    //                 if ( (t-xgap) > 0.0 )
-    //                     axis->Axis()->axis(QCPAxis::atBottom)->setRange(t - xgap, t);
-    //             }
-                
-    //             plot->Plot()->replot();
-    //         }
-    //     });
-    // }
-    // QObject::connect(dataTimer, &QTimer::timeout, [this]() {
-    //     for ( auto window : this->_windows )
-    //     {
-    //         static double t = 0;
-    //         t += 0.1;
-
-    //         for ( auto &plot : window->Plots() ) 
-    //         {
-    //             for ( int i = 0; i < plot->Axes().size(); i++ )             
-    //             {
-    //                 auto axis = plot->Axes()[i];
-    //                 const auto xgap = axis->XGap();
-
-    //                 for ( int j = 0; j < axis->Axis()->graphs().size(); j++ ) 
-    //                 {
-    //                     axis->Axis()->graphs()[j]->addData(t, std::sin( t + static_cast<double>( M_PI_4 * j ) ) );
-    //                     if ( (t-xgap) > 0.0 )
-    //                         axis->Axis()->graphs()[j]->data()->removeBefore(t-xgap);
-    //                 }
-
-    //                 if ( (t-xgap) > 0.0 )
-    //                     axis->Axis()->axis(QCPAxis::atBottom)->setRange(t - xgap, t);
-    //             }
-                
-    //             plot->Plot()->replot();
-    //         }
-    //     }
-    // } ); 
-    QObject::connect( dataTimer, &QTimer::timeout, this, &DisplayRT::UpdateMonitor );
-    // QObject::connect( dataTimer, SIGNAL(QTimer::timeout()), this, SLOT(DisplayRT::UpdateMonitor()) );
+    QObject::connect( dataTimer, &QTimer::timeout, this, &DisplayRT::Update );
     dataTimer->start(100); // Update every 100 ms
     
     { // debug
@@ -476,15 +389,6 @@ DisplayRT::Status DisplayRT::Setup()
 
 DisplayRT::Status DisplayRT::Start() 
 { 
-    // { // debug
-    //     std::cout << "\nDisplayRT: Start windows display\n";
-    // }
-    
-    // for ( auto &window : this->_windows )
-    // {
-    //     window->Window()->show();
-    // }
-
     { // debug
         std::cout << "\nDisplayRT: Start QT application\n";
     }
@@ -494,7 +398,7 @@ DisplayRT::Status DisplayRT::Start()
     return Status::NORMAL; 
 }
 
-DisplayRT::Status DisplayRT::UpdateMonitor()
+DisplayRT::Status DisplayRT::defaultUpdateDisplay()
 {
     for ( auto window : this->_windows )
     {

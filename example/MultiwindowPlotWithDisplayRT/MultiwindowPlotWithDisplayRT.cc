@@ -41,9 +41,30 @@
 
 using namespace display_rt; // for DisplayRT
 
+class myDisplayRT : public DisplayRT
+{
+public: 
+    myDisplayRT( const std::shared_ptr<DisplayRT_Property> display_property )
+    : DisplayRT(display_property)
+    {
+    }
+
+    Status Setup() override
+    {
+        DisplayRT::defaultSetupDisplay();
+        return Status::NORMAL;
+    }    
+
+    Status Update() override
+    {
+        DisplayRT::defaultUpdateDisplay();
+        return Status::NORMAL;
+    }
+};
+
 int main(int argc, char *argv[])
 {
-    std::shared_ptr<DisplayRT_Property> monitor_property; 
+    std::shared_ptr<DisplayRT_Property> display_property; 
     int id = 0;
     int window_count = 2;
     std::vector< std::shared_ptr<QCP_Window_Property> > window_properties;
@@ -402,17 +423,13 @@ int main(int argc, char *argv[])
     }
     // window_properties.push_back(window_property);
 
-    monitor_property = std::make_shared<DisplayRT_Property>(id, window_count, window_properties);
+    display_property = std::make_shared<DisplayRT_Property>(id, window_count, window_properties);
     
-    auto monitor = std::make_shared<DisplayRT>( monitor_property ); 
-
-    monitor->Initial( argc, argv); 
-
-    monitor->Setup();
-
-    monitor->Start(); 
+    // display
+    auto display = std::make_shared<myDisplayRT>( display_property ); 
+    display->Initial( argc, argv); 
+    display->Setup();
+    display->Start(); 
 
     return 0; 
-
-    // return multiple_windows(argc, argv);
 }

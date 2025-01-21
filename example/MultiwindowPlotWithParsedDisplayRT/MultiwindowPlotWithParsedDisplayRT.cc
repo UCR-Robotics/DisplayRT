@@ -39,6 +39,27 @@
 
 using namespace display_rt; // for DisplayRT
 
+class myDisplayRT : public DisplayRT
+{
+public: 
+    myDisplayRT( const std::shared_ptr<DisplayRT_Property> monitor_property )
+    : DisplayRT(monitor_property)
+    {
+    }
+
+    Status Setup() override
+    {
+        DisplayRT::defaultSetupDisplay();
+        return Status::NORMAL;
+    }    
+
+    Status Update() override
+    {
+        DisplayRT::defaultUpdateDisplay();
+        return Status::NORMAL;
+    }
+};
+
 int main(int argc, char *argv[])
 {
     // parser
@@ -52,7 +73,7 @@ int main(int argc, char *argv[])
     auto display_property = display_parser->parseConfiguration( path, parser );
 
     // display
-    auto display = std::make_shared<DisplayRT>( display_property ); 
+    auto display = std::make_shared<myDisplayRT>( display_property ); 
     display->Initial( argc, argv); 
     display->Setup();
     display->Start(); 

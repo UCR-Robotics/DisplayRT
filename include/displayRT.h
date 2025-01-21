@@ -525,11 +525,12 @@ public: // major functions
 
     /**
      * @brief Setup the display with signal-slot connections. 
-     * It can be overrided for customized setup.
+     * This is a pure virtual method and must be implemented by users. 
+     * One can call defaultSetupDisplay() for an example setup.
      * 
      * @return Status 
      */
-    virtual Status Setup();
+    virtual Status Setup() = 0;
 
     /**
      * @brief Start the monitor with Qt application.
@@ -538,7 +539,15 @@ public: // major functions
      */
     Status Start(); 
 
-    virtual Status UpdateMonitor(); 
+    /**
+     * @brief Update the display with new data. 
+     * This is a pure virtual method and must be implemented by users. 
+     * One can call defaultUpdateDisplay() for an example update. 
+     * 
+     * @return Status 
+     */
+    virtual Status Update() = 0; 
+
 
 protected: // internal variables
     std::shared_ptr<DisplayRT_Property> _monitor_property;
@@ -552,6 +561,22 @@ protected: // internal variables
     std::shared_ptr< QTimer > _dataTimer; 
 
 protected: // internal methods
+
+    /**
+     * @brief Default setup for the display. It links the timer with the update method. 
+     * It serves as an example setup for users to check their setup's feasibility. 
+     * 
+     * @return Status 
+     */
+    Status defaultSetupDisplay();
+
+    /**
+     * @brief Default update for the display. It updates all plots with sine wave data. 
+     * It serves as an example update for users to check their update's feasibility. 
+     * 
+     * @return Status 
+     */
+    Status defaultUpdateDisplay(); 
 
     std::shared_ptr<QCP_Window> CreateWindow( const std::shared_ptr<WindowProperty> window_property );
 
