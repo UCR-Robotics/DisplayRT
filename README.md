@@ -1,7 +1,6 @@
 # DisplayRT
 This is a utility program for displaying data stream in soft realtime in multiple windows. 
 This project is originally motivated to visualize data of various types from a mobile robot. 
-It is essentially an abstraction class named **DisplayRT** that can be coordinated directly in your project or with the middleware like ROS/ROS2 or LCM.  
 
 # Dependencies
 
@@ -18,7 +17,11 @@ The easiest way is to run the script *setup.sh* in the root folder. It will inst
 You can also compile it as a normal CMake project. 
 
 # Usage
+It is essentially an abstraction class named **DisplayRT** that can be coordinated directly in your project or with the middleware like ROS1/ROS2 or LCM. 
+You should develop your display class by inheriting **DisplayRT** and implement the virtual methods *Setup()* and *Update()*. 
+A quick start would be calling *defaultSetupDisplay()* and *defaultUpdateDisplay()* in your *Setup()* and *Update()* implementations respectively. 
 
+See examples in \example folder for more usage cases. 
 
 # Reference
 
