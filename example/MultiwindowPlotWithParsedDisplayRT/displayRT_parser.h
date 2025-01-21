@@ -41,17 +41,7 @@ class DisplayRT_Parser: public DisplayRT_ParserBase {
 
       auto & parser = getParser( config_file_path, parser_in );
 
-      auto & messages_yaml = parser["monitor"]["Monitor0"]["messages"];
-
-      // // check if the configuration is QCP compatible
-      // auto config_ptr = std::dynamic_pointer_cast<DisplayProperty>(configuration);
-      // if ( config_ptr.get() == nullptr ) {
-      //   std::stringstream ss;
-      //   ss << "\n\nMonitor_Parser_Abstraction::parseMonitorConfiguration: incompatible monitor configuration. ";
-      //   ss << "Expected QCP_Monitor_Property, but got something else.\n\n";
-      //   throw std::runtime_error(ss.str());
-      //   return ControlStatus::ErrorTerminate;
-      // }
+      auto & messages_yaml = parser["displays"]["Display0"]["messages"];
 
       // lambda: parse window property
       auto parseWindowProperty = [] ( Yaml::Node & window_yaml ) {
@@ -153,7 +143,7 @@ class DisplayRT_Parser: public DisplayRT_ParserBase {
       }; // parseWindowProperty
 
       // monitor property
-      auto & monitor_yaml = parser["monitor"]["Monitor0"]; 
+      auto & monitor_yaml = parser["displays"]["Display0"]; 
       int monitor_id = monitor_yaml["id"].As<int>();
       int window_count = monitor_yaml["window_count"].As<int>();
       

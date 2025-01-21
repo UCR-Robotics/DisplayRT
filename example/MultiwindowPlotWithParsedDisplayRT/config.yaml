@@ -1,5 +1,5 @@
-monitor: # parameters of monitor components
-  Monitor0: 
+displays: 
+  Display0: 
     id: 0
     window_count: 2
     messages: 
@@ -7,11 +7,11 @@ monitor: # parameters of monitor components
         servos: 
           enable: false
           id: 0 # window ID
-          channel: servos_all
+          channel: servos
           px: 0 # window position x
           py: 0 # window position y
           width: 800 # window width in pixels
-          height: 1600 # window height in pixels
+          height: 1000 # window height in pixels
           plot_count: 3 # number of servos
           plots:
             - id: 0 # plot ID = servo ID
@@ -1002,7 +1002,7 @@ monitor: # parameters of monitor components
           px: 0 # window position x
           py: 0 # window position y
           width: 800 # window width in pixels
-          height: 1600 # window height in pixels
+          height: 1000 # window height in pixels
           plot_count: 1 # number of servos
           plots:
             - id: 0 # plot ID, IMU 0
@@ -1102,7 +1102,7 @@ monitor: # parameters of monitor components
           px: 0 # window position x
           py: 0 # window position y
           width: 800 # window width in pixels
-          height: 1600 # window height in pixels
+          height: 1000 # window height in pixels
           plot_count: 0 # number of servos
           # plots:
         
@@ -1113,7 +1113,7 @@ monitor: # parameters of monitor components
           px: 0 # window position x
           py: 0 # window position y
           width: 800 # window width in pixels
-          height: 1600 # window height in pixels
+          height: 1000 # window height in pixels
           plot_count: 0 # number of servos
           # plots:
 
@@ -1125,7 +1125,7 @@ monitor: # parameters of monitor components
           px: 0 # window position x
           py: 0 # window position y
           width: 800 # window width in pixels
-          height: 1600 # window height in pixels
+          height: 1000 # window height in pixels
           plot_count: 0 # number of servos
           # plots:
         
@@ -1136,7 +1136,7 @@ monitor: # parameters of monitor components
           px: 0 # window position x
           py: 0 # window position y
           width: 800 # window width in pixels
-          height: 1600 # window height in pixels
+          height: 1000 # window height in pixels
           plot_count: 0 # number of servos
           # plots:
         
@@ -1147,7 +1147,7 @@ monitor: # parameters of monitor components
           px: 0 # window position x
           py: 0 # window position y
           width: 800 # window width in pixels
-          height: 1600 # window height in pixels
+          height: 1000 # window height in pixels
           plot_count: 0 # number of servos
           # plots:
         
@@ -1158,7 +1158,7 @@ monitor: # parameters of monitor components
           px: 0 # window position x
           py: 0 # window position y
           width: 800 # window width in pixels
-          height: 1600 # window height in pixels
+          height: 1000 # window height in pixels
           plot_count: 0 # number of servos
           # plots:
         
@@ -1169,7 +1169,7 @@ monitor: # parameters of monitor components
           px: 900 # window position x
           py: 0 # window position y
           width: 800 # window width in pixels
-          height: 1600 # window height in pixels
+          height: 1000 # window height in pixels
           plot_count: 2 # mean and covariance
           plots:
             - id: 0 # plot ID, mean
@@ -1410,7 +1410,7 @@ monitor: # parameters of monitor components
           px: 0 # window position x
           py: 0 # window position y
           width: 800 # window width in pixels
-          height: 1600 # window height in pixels
+          height: 1000 # window height in pixels
           plot_count: 0 # number of servos
           # plots:
         
@@ -1421,7 +1421,7 @@ monitor: # parameters of monitor components
           px: 0 # window position x
           py: 0 # window position y
           width: 800 # window width in pixels
-          height: 1600 # window height in pixels
+          height: 1000 # window height in pixels
           plot_count: 0 # number of servos
           # plots:
         
@@ -1432,7 +1432,7 @@ monitor: # parameters of monitor components
           px: 0 # window position x
           py: 0 # window position y
           width: 800 # window width in pixels
-          height: 1600 # window height in pixels
+          height: 1000 # window height in pixels
           plot_count: 0 # number of servos
           # plots:
         
@@ -1443,6 +1443,6 @@ monitor: # parameters of monitor components
           px: 0 # window position x
           py: 0 # window position y
           width: 800 # window width in pixels
-          height: 1600 # window height in pixels
+          height: 1000 # window height in pixels
           plot_count: 0 # number of servos
           # plots:
