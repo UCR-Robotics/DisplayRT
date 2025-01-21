@@ -60,6 +60,8 @@ class DisplayRT_Parser: public DisplayRT_ParserBase {
           // window property
           int window_id = window_yaml["id"].As<int>();
           std::string channel = window_yaml["channel"].As<std::string>();
+          int px = window_yaml["px"].As<int>(); // window position x
+          int py = window_yaml["py"].As<int>(); // window position y
           int width = window_yaml["width"].As<int>(); // window width
           int height = window_yaml["height"].As<int>(); // window height
           int plot_count = window_yaml["plot_count"].As<int>(); // number of plots under the same window
@@ -139,7 +141,7 @@ class DisplayRT_Parser: public DisplayRT_ParserBase {
             plot_properties.push_back( plot_property );
           }
           
-          auto window_property = std::make_shared< WindowProperty >(window_id, channel, plot_count, width, height, plot_properties);
+          auto window_property = std::make_shared< WindowProperty >(window_id, channel, plot_count, px, py, width, height, plot_properties);
 
           // // store window property
           // window_properties.push_back( window_property );

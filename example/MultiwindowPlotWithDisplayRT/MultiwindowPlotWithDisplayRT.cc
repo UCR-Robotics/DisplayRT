@@ -77,8 +77,10 @@ int main(int argc, char *argv[])
         int id = 0;
         std::string channel = "channel 0";
         int plot_count = 2;
+        int px = 0;
+        int py = 0;
         int width = 800;
-        int height = 600;
+        int height = 1000;
         std::vector< std::shared_ptr< QCP_Plot_Property > > plot_properties;
         
         // std::shared_ptr< QCP_Plot_Property > plot_property;
@@ -301,7 +303,7 @@ int main(int argc, char *argv[])
         }
         // plot_properties.push_back(plot_property);
 
-        window_property = std::make_shared<QCP_Window_Property>(id, channel, plot_count, width, height, plot_properties);
+        window_property = std::make_shared<QCP_Window_Property>(id, channel, plot_count, px, py, width, height, plot_properties);
 
         window_properties.push_back(window_property);
     }
@@ -313,6 +315,8 @@ int main(int argc, char *argv[])
         int id = 1;
         std::string channel = "channel 1";
         int plot_count = 1;
+        int px = 900;
+        int py = 0;
         int width = 800;
         int height = 600;
         std::vector< std::shared_ptr< QCP_Plot_Property > > plot_properties;
@@ -417,7 +421,7 @@ int main(int argc, char *argv[])
         }
         // plot_properties.push_back(plot_property);
 
-        window_property = std::make_shared<QCP_Window_Property>(id, channel, plot_count, width, height, plot_properties);
+        window_property = std::make_shared<QCP_Window_Property>(id, channel, plot_count, px, py, width, height, plot_properties);
 
         window_properties.push_back(window_property);
     }

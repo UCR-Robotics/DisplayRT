@@ -8,6 +8,8 @@ monitor: # parameters of monitor components
           enable: false
           id: 0 # window ID
           channel: servos_all
+          px: 0 # window position x
+          py: 0 # window position y
           width: 800 # window width in pixels
           height: 1600 # window height in pixels
           plot_count: 3 # number of servos
@@ -997,6 +999,8 @@ monitor: # parameters of monitor components
           enable: true
           id: 1 # window ID
           channel: sensors_all
+          px: 0 # window position x
+          py: 0 # window position y
           width: 800 # window width in pixels
           height: 1600 # window height in pixels
           plot_count: 1 # number of servos
@@ -1095,6 +1099,8 @@ monitor: # parameters of monitor components
           enable: false
           id: 2 # window ID
           channel: bodies_all
+          px: 0 # window position x
+          py: 0 # window position y
           width: 800 # window width in pixels
           height: 1600 # window height in pixels
           plot_count: 0 # number of servos
@@ -1104,6 +1110,8 @@ monitor: # parameters of monitor components
           enable: false
           id: 3 # window ID
           channel: legs_all
+          px: 0 # window position x
+          py: 0 # window position y
           width: 800 # window width in pixels
           height: 1600 # window height in pixels
           plot_count: 0 # number of servos
@@ -1114,6 +1122,8 @@ monitor: # parameters of monitor components
           enable: false
           id: 4 # window ID  
           channel: supervisor
+          px: 0 # window position x
+          py: 0 # window position y
           width: 800 # window width in pixels
           height: 1600 # window height in pixels
           plot_count: 0 # number of servos
@@ -1123,6 +1133,8 @@ monitor: # parameters of monitor components
           enable: false
           id: 5 # window ID
           channel: composite_centroid
+          px: 0 # window position x
+          py: 0 # window position y
           width: 800 # window width in pixels
           height: 1600 # window height in pixels
           plot_count: 0 # number of servos
@@ -1132,6 +1144,8 @@ monitor: # parameters of monitor components
           enable: false
           id: 6 # window ID
           channel: gait_scheduler
+          px: 0 # window position x
+          py: 0 # window position y
           width: 800 # window width in pixels
           height: 1600 # window height in pixels
           plot_count: 0 # number of servos
@@ -1141,6 +1155,8 @@ monitor: # parameters of monitor components
           enable: false
           id: 7 # window ID
           channel: low_level_estimator
+          px: 0 # window position x
+          py: 0 # window position y
           width: 800 # window width in pixels
           height: 1600 # window height in pixels
           plot_count: 0 # number of servos
@@ -1150,6 +1166,8 @@ monitor: # parameters of monitor components
           enable: true
           id: 8 # window ID
           channel: whole_body_estimator
+          px: 900 # window position x
+          py: 0 # window position y
           width: 800 # window width in pixels
           height: 1600 # window height in pixels
           plot_count: 2 # mean and covariance
@@ -1389,6 +1407,8 @@ monitor: # parameters of monitor components
           enable: false
           id: 9 # window ID
           channel: whole_body_planner
+          px: 0 # window position x
+          py: 0 # window position y
           width: 800 # window width in pixels
           height: 1600 # window height in pixels
           plot_count: 0 # number of servos
@@ -1398,6 +1418,8 @@ monitor: # parameters of monitor components
           enable: false
           id: 10 # window ID
           channel: stance_leg_planner
+          px: 0 # window position x
+          py: 0 # window position y
           width: 800 # window width in pixels
           height: 1600 # window height in pixels
           plot_count: 0 # number of servos
@@ -1407,6 +1429,8 @@ monitor: # parameters of monitor components
           enable: false
           id: 11 # window ID
           channel: swing_leg_planner
+          px: 0 # window position x
+          py: 0 # window position y
           width: 800 # window width in pixels
           height: 1600 # window height in pixels
           plot_count: 0 # number of servos
@@ -1416,6 +1440,8 @@ monitor: # parameters of monitor components
           enable: false
           id: 12 # window ID
           channel: low_level_tracker
+          px: 0 # window position x
+          py: 0 # window position y
           width: 800 # window width in pixels
           height: 1600 # window height in pixels
           plot_count: 0 # number of servos

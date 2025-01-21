@@ -198,7 +198,7 @@ public:
     std::vector< std::shared_ptr<QCPPlottableLegendItem> > bottomLegendItems2;
 };
 
-void setupWindow( std::shared_ptr<MyWindow> window )
+void setupWindow( std::shared_ptr<MyWindow> window, const int px, const int py, const int width, const int height )
 {
     // Create a central widget and a layout
     // auto centralWidget = std::make_shared<QWidget>( window.get() );
@@ -228,7 +228,8 @@ void setupWindow( std::shared_ptr<MyWindow> window )
         std::cout << "set central widget to window done" << std::endl;
     }
 
-    window->resize(800, 600);
+    // window->resize(800, 600);
+    window->setGeometry(px, py, width, height); 
     { // debug
         std::cout << "resize window done" << std::endl;
     }
@@ -435,10 +436,10 @@ void multiple_windows(int argc, char *argv[])
     QApplication a(argc, argv);
 
     std::shared_ptr<MyWindow> window1 = std::make_shared<MyWindow>();
-    setupWindow(window1);
+    setupWindow(window1, 0, 0, 800, 600);
 
     std::shared_ptr<MyWindow> window2 = std::make_shared<MyWindow>();
-    setupWindow(window2);
+    setupWindow(window2, 900, 200, 800, 600);
 
     window1->show();
     window2->show();
@@ -446,7 +447,7 @@ void multiple_windows(int argc, char *argv[])
     a.exec();
 }
 
-void single_window(int argc, char *argv[])
+void single_window(int argc, char *argv[], const int px, const int py)
 {
     QApplication a(argc, argv);
     std::shared_ptr<QMainWindow> window = std::make_shared<QMainWindow>();
@@ -680,7 +681,8 @@ void single_window(int argc, char *argv[])
     dataTimer.start(20); // Update every 100 ms
     
 
-    window->resize(800, 600);
+    // window->resize(800, 600);
+    window->setGeometry(px, py, 800, 600);
     window->show();
 
     a.exec();

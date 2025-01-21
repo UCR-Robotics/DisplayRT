@@ -252,6 +252,8 @@ public: // major methods
         * @param id id for window, used for local index under the same monitor
         * @param channel message channel for window
         * @param plot_count number of plots under the same window
+        * @param px window top-left corner x position, leftward from top-left screen corner, in pixels
+        * @param py window top-left corner y position, downward from top-left screen corner, in pixels
         * @param width window width, in pixels
         * @param height window height, in pixels
         * @param plot_properties plot properties under the same window
@@ -260,6 +262,8 @@ public: // major methods
             const int id,
             const std::string &channel,
             const int plot_count,
+            const int px, 
+            const int py,
             const int width,
             const int height,
             const std::vector< std::shared_ptr<QCP_Plot_Property> > &plot_properties
@@ -269,6 +273,8 @@ private: // internal variables
     int _id; // id for window, that is, local index under the same monitor
     std::string _channel; // message channel for window
     int _plot_count; // number of plots under the same window
+    int _px; // window top-left corner x position, leftward from top-left screen corner, in pixels
+    int _py; // window top-left corner y position, downward from top-left screen corner, in pixels
     int _width; // window width, in pixels
     int _height; // window height, in pixels
     std::vector< std::shared_ptr<QCP_Plot_Property> > _plot_properties; // plot properties under the same window
@@ -279,6 +285,8 @@ public: // accessors
     int Id() const { return _id; }
     std::string Channel() const { return _channel; }
     int PlotCount() const { return _plot_count; }
+    int Px() const { return _px; }
+    int Py() const { return _py; }
     int Width() const { return _width; }
     int Height() const { return _height; }
     std::vector< std::shared_ptr<QCP_Plot_Property> > PlotProperties() const { return _plot_properties; }

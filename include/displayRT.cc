@@ -219,12 +219,14 @@ QCP_Window_Property::QCP_Window_Property(
     const int id,
     const std::string &channel,
     const int plot_count,
+    const int px, 
+    const int py,
     const int width,
     const int height,
     const std::vector< std::shared_ptr<QCP_Plot_Property> > &plot_properties
 ) 
 : _id(id), _channel(channel), _plot_count(plot_count), 
-  _width(width), _height(height), 
+  _px(px), _py(py), _width(width), _height(height), 
   _plot_properties(plot_properties)
 {
 }
@@ -494,7 +496,8 @@ std::shared_ptr<QCP_Window> DisplayRT::CreateWindow(
     // setup window
     window->CentralWidget()->setLayout(window->Layout().get());
     window->Window()->setCentralWidget(window->CentralWidget().get());
-    window->Window()->resize(window_property->Width(), window_property->Height());
+    // window->Window()->resize(window_property->Width(), window_property->Height());
+    window->Window()->setGeometry(window_property->Px(), window_property->Py(), window_property->Width(), window_property->Height());
 
     // // test: signal
     // QTimer *dataTimer = new QTimer(window->Window().get());
