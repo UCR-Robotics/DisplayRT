@@ -59,8 +59,22 @@ class DisplayRT_Parser: public DisplayRT_ParserBase {
           // plot properties
           std::vector< std::shared_ptr<PlotProperty> > plot_properties;
 
-          // loop over plots
+          // check plots
           auto & plots_yaml = window_yaml["plots"];
+          if ( !plots_yaml.IsSequence() )
+          {
+            std::stringstream ss;
+            ss << "DisplayRT_Parser: window " << window_id << "'s plot properties are not in sequence\n";
+            throw std::runtime_error(ss.str());
+          }
+          if ( plots_yaml.Size() != plot_count )
+          {
+            std::stringstream ss;
+            ss << "DisplayRT_Parser: window " << window_id << " has expected plot count [" << plot_count << "] instead of actual [" << plots_yaml.Size() << "]\n"; 
+            throw std::runtime_error(ss.str());
+          }
+          
+          // loop over plots
           for ( int i = 0; i < plot_count; i++ ) {
             std::shared_ptr< PlotProperty > plot_property;
             
@@ -73,8 +87,22 @@ class DisplayRT_Parser: public DisplayRT_ParserBase {
             // axis properties
             std::vector< std::shared_ptr<AxisProperty> > axis_properties;
 
-            // loop over axes
+            // check axes
             auto & axes_yaml = plot_yaml["axes"];
+            if ( !axes_yaml.IsSequence() )
+            {
+              std::stringstream ss;
+              ss << "DisplayRT_Parser: window " << window_id << " plot " << plot_id << "'s axis properties are not in sequence\n";
+              throw std::runtime_error(ss.str());
+            }
+            if ( axes_yaml.Size() != axis_count )
+            {
+              std::stringstream ss;
+              ss << "DisplayRT_Parser: window " << window_id << " plot " << plot_id << " has expected axis count [" << axis_count << "] instead of actual [" << axes_yaml.Size() << "]\n"; 
+              throw std::runtime_error(ss.str());
+            }
+
+            // loop over axes
             for ( int j = 0; j < axis_count; j++ ) {
               std::shared_ptr< AxisProperty > axis_property;
 
@@ -93,8 +121,22 @@ class DisplayRT_Parser: public DisplayRT_ParserBase {
               // graph properties
               std::vector< std::shared_ptr<GraphProperty> > graph_properties;
 
-              // loop over graphs
+              // check graphs
               auto & graphs_yaml = axis_yaml["graphs"];
+              if ( !graphs_yaml.IsSequence() )
+              {
+                std::stringstream ss;
+                ss << "DisplayRT_Parser: window " << window_id << " plot " << plot_id << " axis " << axis_id << "'s graph properties are not in sequence\n";
+                throw std::runtime_error(ss.str());
+              }
+              if ( graphs_yaml.Size() != graph_count )
+              {
+                std::stringstream ss;
+                ss << "DisplayRT_Parser: window " << window_id << " plot " << plot_id << " axis " << axis_id << " has expected graph count [" << graph_count << "] instead of actual [" << graphs_yaml.Size() << "]\n"; 
+                throw std::runtime_error(ss.str());
+              }
+
+              // loop over graphs
               for ( int k = 0; k < graph_count; k++ ) {
                 std::shared_ptr< GraphProperty > graph_property;
 
@@ -151,7 +193,8 @@ class DisplayRT_Parser: public DisplayRT_ParserBase {
       std::vector< std::shared_ptr<WindowProperty> > window_properties;
 
       { // robot: servo message
-        auto & window_yaml = messages_yaml["robot"]["servos"];
+        // auto & window_yaml = messages_yaml["robot"]["servos"];
+        auto & window_yaml = messages_yaml["servos"];
         auto window_property = parseWindowProperty( window_yaml );
         if ( window_property != nullptr ) {
           window_properties.push_back( window_property );
@@ -159,102 +202,103 @@ class DisplayRT_Parser: public DisplayRT_ParserBase {
       }
 
       { // robot: sensor message
-        auto & window_yaml = messages_yaml["robot"]["sensors"];
+        // auto & window_yaml = messages_yaml["robot"]["sensors"];
+        auto & window_yaml = messages_yaml["sensors"];
         auto window_property = parseWindowProperty( window_yaml );
         if ( window_property != nullptr ) {
           window_properties.push_back( window_property );
         }
       }
 
-      { // robot: bodies
-        auto & window_yaml = messages_yaml["robot"]["bodies"];
-        auto window_property = parseWindowProperty( window_yaml );
-        if ( window_property != nullptr ) {
-          window_properties.push_back( window_property );
-        }
-      }
+      // { // robot: bodies
+      //   auto & window_yaml = messages_yaml["robot"]["bodies"];
+      //   auto window_property = parseWindowProperty( window_yaml );
+      //   if ( window_property != nullptr ) {
+      //     window_properties.push_back( window_property );
+      //   }
+      // }
 
-      { // robot: legs
-        auto & window_yaml = messages_yaml["robot"]["legs"];
-        auto window_property = parseWindowProperty( window_yaml );
-        if ( window_property != nullptr ) {
-          window_properties.push_back( window_property );
-        }
-      }
+      // { // robot: legs
+      //   auto & window_yaml = messages_yaml["robot"]["legs"];
+      //   auto window_property = parseWindowProperty( window_yaml );
+      //   if ( window_property != nullptr ) {
+      //     window_properties.push_back( window_property );
+      //   }
+      // }
 
-      // more robot-related components
+      // // more robot-related components
 
-      { // controller: supervisor
-        auto & window_yaml = messages_yaml["controller"]["supervisor"];
-        auto window_property = parseWindowProperty( window_yaml );
-        if ( window_property != nullptr ) {
-          window_properties.push_back( window_property );
-        }
-      }
+      // { // controller: supervisor
+      //   auto & window_yaml = messages_yaml["controller"]["supervisor"];
+      //   auto window_property = parseWindowProperty( window_yaml );
+      //   if ( window_property != nullptr ) {
+      //     window_properties.push_back( window_property );
+      //   }
+      // }
 
-      { // controller: composite_centroid
-        auto & window_yaml = messages_yaml["controller"]["composite_centroid"];
-        auto window_property = parseWindowProperty( window_yaml );
-        if ( window_property != nullptr ) {
-          window_properties.push_back( window_property );
-        }
-      }
+      // { // controller: composite_centroid
+      //   auto & window_yaml = messages_yaml["controller"]["composite_centroid"];
+      //   auto window_property = parseWindowProperty( window_yaml );
+      //   if ( window_property != nullptr ) {
+      //     window_properties.push_back( window_property );
+      //   }
+      // }
 
-      { // controller: gait_scheduler
-        auto & window_yaml = messages_yaml["controller"]["gait_scheduler"];
-        auto window_property = parseWindowProperty( window_yaml );
-        if ( window_property != nullptr ) {
-          window_properties.push_back( window_property );
-        }
-      }
+      // { // controller: gait_scheduler
+      //   auto & window_yaml = messages_yaml["controller"]["gait_scheduler"];
+      //   auto window_property = parseWindowProperty( window_yaml );
+      //   if ( window_property != nullptr ) {
+      //     window_properties.push_back( window_property );
+      //   }
+      // }
 
-      { // controller: low-level estimator
-        auto & window_yaml = messages_yaml["controller"]["low_level_estimator"];
-        auto window_property = parseWindowProperty( window_yaml );
-        if ( window_property != nullptr ) {
-          window_properties.push_back( window_property );
-        }
-      }
+      // { // controller: low-level estimator
+      //   auto & window_yaml = messages_yaml["controller"]["low_level_estimator"];
+      //   auto window_property = parseWindowProperty( window_yaml );
+      //   if ( window_property != nullptr ) {
+      //     window_properties.push_back( window_property );
+      //   }
+      // }
 
-      { // controller: whole-body estimator
-        auto & window_yaml = messages_yaml["controller"]["whole_body_estimator"];
-        auto window_property = parseWindowProperty( window_yaml );
-        if ( window_property != nullptr ) {
-          window_properties.push_back( window_property );
-        }
-      }
+      // { // controller: whole-body estimator
+      //   auto & window_yaml = messages_yaml["controller"]["whole_body_estimator"];
+      //   auto window_property = parseWindowProperty( window_yaml );
+      //   if ( window_property != nullptr ) {
+      //     window_properties.push_back( window_property );
+      //   }
+      // }
 
-      { // controller: whole-body planner
-        auto & window_yaml = messages_yaml["controller"]["whole_body_planner"];
-        auto window_property = parseWindowProperty( window_yaml );
-        if ( window_property != nullptr ) {
-          window_properties.push_back( window_property );
-        }
-      }
+      // { // controller: whole-body planner
+      //   auto & window_yaml = messages_yaml["controller"]["whole_body_planner"];
+      //   auto window_property = parseWindowProperty( window_yaml );
+      //   if ( window_property != nullptr ) {
+      //     window_properties.push_back( window_property );
+      //   }
+      // }
 
-      { // controller: stance-leg planner
-        auto & window_yaml = messages_yaml["controller"]["stance_leg_planner"];
-        auto window_property = parseWindowProperty( window_yaml );
-        if ( window_property != nullptr ) {
-          window_properties.push_back( window_property );
-        }
-      }
+      // { // controller: stance-leg planner
+      //   auto & window_yaml = messages_yaml["controller"]["stance_leg_planner"];
+      //   auto window_property = parseWindowProperty( window_yaml );
+      //   if ( window_property != nullptr ) {
+      //     window_properties.push_back( window_property );
+      //   }
+      // }
 
-      { // controller: swing-leg planner
-        auto & window_yaml = messages_yaml["controller"]["swing_leg_planner"];
-        auto window_property = parseWindowProperty( window_yaml );
-        if ( window_property != nullptr ) {
-          window_properties.push_back( window_property );
-        }
-      }
+      // { // controller: swing-leg planner
+      //   auto & window_yaml = messages_yaml["controller"]["swing_leg_planner"];
+      //   auto window_property = parseWindowProperty( window_yaml );
+      //   if ( window_property != nullptr ) {
+      //     window_properties.push_back( window_property );
+      //   }
+      // }
 
-      { // controller: low-level tracker
-        auto & window_yaml = messages_yaml["controller"]["low_level_tracker"];
-        auto window_property = parseWindowProperty( window_yaml );
-        if ( window_property != nullptr ) {
-          window_properties.push_back( window_property );
-        }
-      }
+      // { // controller: low-level tracker
+      //   auto & window_yaml = messages_yaml["controller"]["low_level_tracker"];
+      //   auto window_property = parseWindowProperty( window_yaml );
+      //   if ( window_property != nullptr ) {
+      //     window_properties.push_back( window_property );
+      //   }
+      // }
 
       
 
