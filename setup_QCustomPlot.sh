@@ -12,7 +12,7 @@ fi
 # # QT5 
 # sudo apt install g++ make cmake qtbase5-dev qt5-qmake qtbase5-dev-tools libqt5widgets5v qtwayland5
 
-# Safe the current path for later use
+# Save the current path for later use
 current_path=$(pwd)
 
 # Check if the /thirdparty/QCustomPlot/ directory exists in the current path. If not, exit with warning. If so, enter the directory.
