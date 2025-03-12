@@ -15,7 +15,7 @@ displays:
         plots:
           - id: 0 # plot ID = servo ID
             axis_count: 3 # pos, vel, force
-            title: "Revolute Servo"
+            title: "Revolute Servo 0"
             axes:
               - id: 0 # axis ID
                 title: "Position"
@@ -85,7 +85,7 @@ displays:
                     pen_width: 2
           - id: 1
             axis_count: 3
-            title: "Prismatic Servo"
+            title: "Revolute Servo 1"
             axes:
               - id: 0
                 title: "Position"

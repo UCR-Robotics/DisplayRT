@@ -38,6 +38,8 @@
 #include "displayRT_parser.h"
 
 #include <lcm/lcm-cpp.hpp>
+#include "lcm/msg/example/imu_sensor_t.hpp"
+#include "lcm/msg/example/revolute_servo_t.hpp"
 
 
 using namespace display_rt; // for DisplayRT
@@ -61,6 +63,11 @@ public:
         DisplayRT::defaultUpdateDisplay();
         return Status::NORMAL;
     }
+
+private: 
+    // LCM
+    std::shared_ptr<lcm::LCM> lcm_;
+    
 };
 
 int main(int argc, char *argv[])
