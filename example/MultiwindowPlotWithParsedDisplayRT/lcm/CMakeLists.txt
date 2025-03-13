@@ -21,11 +21,13 @@ add_executable(MultiwindowPlotWithParsedDisplayRTandLCM
 
 target_link_libraries(MultiwindowPlotWithParsedDisplayRTandLCM 
     displayrt 
+    ${LCM_LIBRARY} 
     # ${CMAKE_CURRENT_SOURCE_DIR}
 )
 
 target_include_directories(MultiwindowPlotWithParsedDisplayRTandLCM 
-    PUBLIC
+    PUBLIC 
+    ${LCM_INCLUDE_DIR} 
     ${CMAKE_CURRENT_SOURCE_DIR} 
     ${CMAKE_CURRENT_SOURCE_DIR}/.. 
 )

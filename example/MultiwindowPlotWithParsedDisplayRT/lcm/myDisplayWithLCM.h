@@ -80,7 +80,7 @@ struct Servos_Message
 
         { // debug
             std::stringstream ss;
-            ss << "Servos Message : \n" 
+            ss << "Publishing Servos Message : \n" 
             << "channel: " << channel << ","
             << "timestamp: " << data->timestamp << std::endl;
             
@@ -160,7 +160,7 @@ struct Sensors_Message
 
         { // debug
             std::stringstream ss;
-            ss << "Sensors Message : \n" 
+            ss << "Publishing Sensors Message : \n" 
                  << "channel: " << channel << ","
                  << "timestamp: " << data->timestamp << std::endl;
             
@@ -191,14 +191,14 @@ class myPublisherLCM
     public: 
         myPublisherLCM()
         {
-            lcm_ = std::make_shared<lcm::LCM>("udpm://239.255.76.67:7667?ttl=2");
-            if (!lcm_->good())
+            this->lcm_ = std::make_shared<lcm::LCM>("udpm://239.255.76.67:7667?ttl=2");
+            if (!this->lcm_->good())
             {
-                throw std::runtime_error("LCM is not good");
+                throw std::runtime_error("[WARNING] myPublisherLCM: LCM is not good");
             }
             else
             {
-                std::cout << "LCM is good" << std::endl;
+                std::cout << "[INFO] myPublisherLCM: LCM is good" << std::endl;
             }
 
             this->servos_message_ = std::make_shared<Servos_Message>( this->channel_servos_, this->count_revolute_servo_ );
@@ -253,6 +253,96 @@ class myPublisherLCM
             lcm_->publish( sensors_message_->channel, sensors_data_.get() );
         }
 
+}; 
+
+/******************/
+/* LCM Subscriber */
+/******************/
+
+class mySubscriberLCM
+{
+    public: 
+        mySubscriberLCM()
+        {
+            this->lcm_ = std::make_shared<lcm::LCM>("udpm://239.255.76.67:7667?ttl=2");
+            if (!lcm_->good())
+            {
+                throw std::runtime_error("[WARNING] mySubscriberLCM: LCM is not good");
+            }
+            else
+            {
+                std::cout << "[INFO] mySubscriberLCM: LCM is good" << std::endl;
+            }
+
+            lcm_->subscribe( this->channel_servos_, &mySubscriberLCM::servosCallbackHandler, this);
+            lcm_->subscribe( this->channel_sensors_, &mySubscriberLCM::sensorsCallbackHandler, this);
+        }
+
+        int spinOnce()
+        {
+            this->lcm_->handle();
+            return 0;
+        }
+    
+    private:
+        std::shared_ptr<lcm::LCM> lcm_;
+        std::string channel_servos_ = "servos";
+        std::string channel_sensors_ = "sensors";
+
+        std::shared_ptr<msg::servos_t> servos_data_;
+        std::shared_ptr<msg::sensors_t> sensors_data_;
+    
+    private: // internal methods
+        void servosCallbackHandler(const lcm::ReceiveBuffer* rbuf, const std::string& channel, const msg::servos_t* msg)
+        {
+            this->servos_data_ = std::make_shared<msg::servos_t>(*msg);
+            
+            { // debug
+                std::stringstream ss;
+                ss << "Receiving Servos Message : \n" 
+                    << "channel: " << channel << ","
+                    << "timestamp: " << this->servos_data_->timestamp << std::endl;
+                
+                for(int i = 0; i < static_cast<int>( this->servos_data_->revolute_servo_count ); ++i)
+                {
+                    ss << "revolute servo[" << i << "]: "
+                        << "id: " << static_cast<int>( this->servos_data_->revolute_servos[i].id ) << ","
+                        << "estimated position: " << this->servos_data_->revolute_servos[i].estimated_position << ","
+                        << "velocity: " << this->servos_data_->revolute_servos[i].estimated_velocity << ","
+                        << "torque: " << this->servos_data_->revolute_servos[i].estimated_torque << "; "
+                        << "commanded position: " << this->servos_data_->revolute_servos[i].commanded_position << ","
+                        << "velocity: " << this->servos_data_->revolute_servos[i].commanded_velocity << ","
+                        << "torque: " << this->servos_data_->revolute_servos[i].commanded_torque 
+                        << std::endl;
+                }
+                
+                std::cout << ss.str() << std::endl;
+            }
+        }
+
+        void sensorsCallbackHandler(const lcm::ReceiveBuffer* rbuf, const std::string& channel, const msg::sensors_t* msg)
+        {
+            this->sensors_data_ = std::make_shared<msg::sensors_t>(*msg);
+            
+            { // debug
+                std::stringstream ss;
+                ss << "Receiving Sensors Message : \n" 
+                    << "channel: " << channel << ","
+                    << "timestamp: " << this->sensors_data_->timestamp << std::endl;
+                
+                for(int i = 0; i < static_cast<int>( this->sensors_data_->imu_sensor_count ); ++i)
+                {
+                    ss << "imu sensor[" << i << "]: "
+                        << "id: " << static_cast<int>( this->sensors_data_->imu_sensors[i].id ) << ","
+                        << "quaternion: " << this->sensors_data_->imu_sensors[i].quaternion[0] << ", " << this->sensors_data_->imu_sensors[i].quaternion[1] << ", " << this->sensors_data_->imu_sensors[i].quaternion[2] << ", " << this->sensors_data_->imu_sensors[i].quaternion[3] << ";"
+                        << "euler rate: " << this->sensors_data_->imu_sensors[i].euler_rate[0] << ", " << this->sensors_data_->imu_sensors[i].euler_rate[1] << ", " << this->sensors_data_->imu_sensors[i].euler_rate[2] << ";"
+                        << "acceleration: " << this->sensors_data_->imu_sensors[i].acceleration[0] << ", " << this->sensors_data_->imu_sensors[i].acceleration[1] << ", " << this->sensors_data_->imu_sensors[i].acceleration[2] 
+                        << std::endl;
+                }
+                
+                std::cout << ss.str() << std::endl;
+            }
+        }
 }; 
 
 

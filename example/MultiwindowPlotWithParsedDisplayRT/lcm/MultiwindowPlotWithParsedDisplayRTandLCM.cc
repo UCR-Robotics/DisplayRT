@@ -70,6 +70,29 @@ int main(int argc, char *argv[])
         }
     );
 
+    // LCM subscriber thread
+    std::thread t1( 
+        [&]{
+            std::shared_ptr<display_rt::example::mySubscriberLCM> subscriber = std::make_shared<display_rt::example::mySubscriberLCM>();
+
+            // spin for LCM subscriber
+            while( true )
+            {
+                try
+                {
+                    subscriber->spinOnce();
+                }
+                catch (const std::exception &e)
+                {
+                    std::cerr << "Exception: " << e.what() << std::endl;
+                }
+
+                // sleep for 10 ms
+                std::this_thread::sleep_for(std::chrono::milliseconds(100));
+            }
+        }
+    );
+
 
 
     // // parser
@@ -89,6 +112,7 @@ int main(int argc, char *argv[])
     // display->Start(); 
 
     t0.join();
+    t1.join();
 
     return 0; 
 }
