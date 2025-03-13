@@ -30,7 +30,7 @@ find_package(Qt5Gui REQUIRED)
 find_package(QCustomPlot REQUIRED)
 # add_definitions(-DQCUSTOMPLOT_USE_LIBRARY)
 
-find_package(LCM REQUIRED)
+# find_package(LCM REQUIRED)
 
 # # Required by SCIQ
 # # LCM

@@ -27,6 +27,7 @@
 #include <memory>
 #include <iostream>
 #include <filesystem>
+#include <thread>
 
 #include <QtWidgets/QApplication>
 #include <QtWidgets/QMainWindow>
@@ -38,55 +39,56 @@
 #include "displayRT_parser.h"
 
 #include <lcm/lcm-cpp.hpp>
-#include "lcm/msg/example/imu_sensor_t.hpp"
-#include "lcm/msg/example/revolute_servo_t.hpp"
+
+#include "myDisplayWithLCM.h"
 
 
 using namespace display_rt; // for DisplayRT
 
-class myDisplayRT : public DisplayRT
-{
-public: 
-    myDisplayRT( const std::shared_ptr<DisplayRT_Property> monitor_property )
-    : DisplayRT(monitor_property)
-    {
-    }
-
-    Status Setup() override
-    {
-        DisplayRT::defaultSetupDisplay();
-        return Status::NORMAL;
-    }    
-
-    Status Update() override
-    {
-        DisplayRT::defaultUpdateDisplay();
-        return Status::NORMAL;
-    }
-
-private: 
-    // LCM
-    std::shared_ptr<lcm::LCM> lcm_;
-    
-};
-
 int main(int argc, char *argv[])
 {
-    // parser
-    std::string path = std::filesystem::current_path().string() + "/../example/MultiwindowPlotWithParsedDisplayRT/config.yaml";
-    // std::string path = std::filesystem::current_path().string() + "/config.yaml";
-    // print out the path
-    std::cout << "\nconfig file path: " << path << std::endl;
+    // LCM publisher thread 
+    std::thread t0( 
+        [&]{
+            std::shared_ptr<display_rt::example::myPublisherLCM> publisher = std::make_shared<display_rt::example::myPublisherLCM>();
 
-    Yaml::Node parser;
-    std::shared_ptr<DisplayRT_Parser> display_parser = std::make_shared<DisplayRT_Parser>();
-    auto display_property = display_parser->parseConfiguration( path, parser );
+            // loop for LCM and to catch exceptions
+            while( true )
+            {
+                try
+                {
+                    publisher->runOnce();
+                }
+                catch (const std::exception &e)
+                {
+                    std::cerr << "Exception: " << e.what() << std::endl;
+                }
 
-    // display
-    auto display = std::make_shared<myDisplayRT>( display_property ); 
-    display->Initial( argc, argv); 
-    display->Setup();
-    display->Start(); 
+                // sleep for 10 ms
+                std::this_thread::sleep_for(std::chrono::milliseconds(500));
+            }
+        }
+    );
+
+
+
+    // // parser
+    // std::string path = std::filesystem::current_path().string() + "/../example/MultiwindowPlotWithParsedDisplayRT/config.yaml";
+    // // std::string path = std::filesystem::current_path().string() + "/config.yaml";
+    // // print out the path
+    // std::cout << "\nconfig file path: " << path << std::endl;
+
+    // Yaml::Node parser;
+    // std::shared_ptr<DisplayRT_Parser> display_parser = std::make_shared<DisplayRT_Parser>();
+    // auto display_property = display_parser->parseConfiguration( path, parser );
+
+    // // display
+    // auto display = std::make_shared<myDisplayRT>( display_property ); 
+    // display->Initial( argc, argv); 
+    // display->Setup();
+    // display->Start(); 
+
+    t0.join();
 
     return 0; 
 }
