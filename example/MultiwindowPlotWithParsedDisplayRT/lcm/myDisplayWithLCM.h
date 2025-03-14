@@ -352,27 +352,102 @@ class mySubscriberLCM
 
 class myDisplayRT : public DisplayRT
 {
-public: 
-    myDisplayRT( const std::shared_ptr<DisplayRT_Property> monitor_property )
-    : DisplayRT(monitor_property)
-    {
-    }
+    Q_OBJECT
 
-    Status Setup() override
-    {
-        DisplayRT::defaultSetupDisplay();
-        return Status::NORMAL;
-    }    
+    public: 
+        myDisplayRT( const std::shared_ptr<DisplayRT_Property> monitor_property )
+        : DisplayRT(monitor_property)
+        {
+            this->lcm_ = std::make_shared<lcm::LCM>("udpm://239.255.76.67:7667?ttl=2");
+            if (!lcm_->good())
+            {
+                throw std::runtime_error("[WARNING] mySubscriberLCM: LCM is not good");
+            }
+            else
+            {
+                std::cout << "[INFO] mySubscriberLCM: LCM is good" << std::endl;
+            }
 
-    Status Update() override
-    {
-        DisplayRT::defaultUpdateDisplay();
-        return Status::NORMAL;
-    }
+            lcm_->subscribe( this->channel_servos_, &myDisplayRT::servosCallbackHandler, this);
+            lcm_->subscribe( this->channel_sensors_, &myDisplayRT::sensorsCallbackHandler, this);
+        }
 
-private: 
-    // LCM
-    std::shared_ptr<lcm::LCM> lcm_;
+        Status Setup() override
+        {
+            // DisplayRT::defaultSetupDisplay();
+
+            QObject::connect( this, &myDisplayRT::servosCallbackHandler, this, &myDisplayRT::Update );
+
+            return Status::NORMAL;
+        }    
+
+        Status Update() override
+        {
+            DisplayRT::defaultUpdateDisplay();
+            return Status::NORMAL;
+        }
+
+    private: 
+        // LCM
+        std::shared_ptr<lcm::LCM> lcm_;
+
+        std::string channel_servos_ = "servos";
+        std::string channel_sensors_ = "sensors";
+
+        std::shared_ptr<msg::servos_t> servos_data_;
+        std::shared_ptr<msg::sensors_t> sensors_data_;
+
+    private: // internal methods
+        void servosCallbackHandler(const lcm::ReceiveBuffer* rbuf, const std::string& channel, const msg::servos_t* msg)
+        {
+            this->servos_data_ = std::make_shared<msg::servos_t>(*msg);
+            
+            { // debug
+                std::stringstream ss;
+                ss << "Receiving Servos Message : \n" 
+                    << "channel: " << channel << ","
+                    << "timestamp: " << this->servos_data_->timestamp << std::endl;
+                
+                for(int i = 0; i < static_cast<int>( this->servos_data_->revolute_servo_count ); ++i)
+                {
+                    ss << "revolute servo[" << i << "]: "
+                        << "id: " << static_cast<int>( this->servos_data_->revolute_servos[i].id ) << ","
+                        << "estimated position: " << this->servos_data_->revolute_servos[i].estimated_position << ","
+                        << "velocity: " << this->servos_data_->revolute_servos[i].estimated_velocity << ","
+                        << "torque: " << this->servos_data_->revolute_servos[i].estimated_torque << "; "
+                        << "commanded position: " << this->servos_data_->revolute_servos[i].commanded_position << ","
+                        << "velocity: " << this->servos_data_->revolute_servos[i].commanded_velocity << ","
+                        << "torque: " << this->servos_data_->revolute_servos[i].commanded_torque 
+                        << std::endl;
+                }
+                
+                std::cout << ss.str() << std::endl;
+            }
+        }
+
+        void sensorsCallbackHandler(const lcm::ReceiveBuffer* rbuf, const std::string& channel, const msg::sensors_t* msg)
+        {
+            this->sensors_data_ = std::make_shared<msg::sensors_t>(*msg);
+            
+            { // debug
+                std::stringstream ss;
+                ss << "Receiving Sensors Message : \n" 
+                    << "channel: " << channel << ","
+                    << "timestamp: " << this->sensors_data_->timestamp << std::endl;
+                
+                for(int i = 0; i < static_cast<int>( this->sensors_data_->imu_sensor_count ); ++i)
+                {
+                    ss << "imu sensor[" << i << "]: "
+                        << "id: " << static_cast<int>( this->sensors_data_->imu_sensors[i].id ) << ","
+                        << "quaternion: " << this->sensors_data_->imu_sensors[i].quaternion[0] << ", " << this->sensors_data_->imu_sensors[i].quaternion[1] << ", " << this->sensors_data_->imu_sensors[i].quaternion[2] << ", " << this->sensors_data_->imu_sensors[i].quaternion[3] << ";"
+                        << "euler rate: " << this->sensors_data_->imu_sensors[i].euler_rate[0] << ", " << this->sensors_data_->imu_sensors[i].euler_rate[1] << ", " << this->sensors_data_->imu_sensors[i].euler_rate[2] << ";"
+                        << "acceleration: " << this->sensors_data_->imu_sensors[i].acceleration[0] << ", " << this->sensors_data_->imu_sensors[i].acceleration[1] << ", " << this->sensors_data_->imu_sensors[i].acceleration[2] 
+                        << std::endl;
+                }
+                
+                std::cout << ss.str() << std::endl;
+            }
+        }
     
 };
 

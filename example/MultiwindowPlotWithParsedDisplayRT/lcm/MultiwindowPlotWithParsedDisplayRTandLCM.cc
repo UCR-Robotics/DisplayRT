@@ -71,28 +71,48 @@ int main(int argc, char *argv[])
     );
 
     // LCM subscriber thread
-    std::thread t1( 
+    // std::thread t1( 
+    //     [&]{
+    //         std::shared_ptr<display_rt::example::mySubscriberLCM> subscriber = std::make_shared<display_rt::example::mySubscriberLCM>();
+
+    //         // spin for LCM subscriber
+    //         while( true )
+    //         {
+    //             try
+    //             {
+    //                 subscriber->spinOnce();
+    //             }
+    //             catch (const std::exception &e)
+    //             {
+    //                 std::cerr << "Exception: " << e.what() << std::endl;
+    //             }
+
+    //             // sleep for 10 ms
+    //             std::this_thread::sleep_for(std::chrono::milliseconds(100));
+    //         }
+    //     }
+    // );
+
+    // myDisplayRT
+    // parser
+    std::string path = std::filesystem::current_path().string() + "/../example/MultiwindowPlotWithParsedDisplayRT/config.yaml";
+    // std::string path = std::filesystem::current_path().string() + "/config.yaml";
+    // print out the path
+    std::cout << "\nconfig file path: " << path << std::endl;
+
+    Yaml::Node parser;
+    std::shared_ptr<DisplayRT_Parser> display_parser = std::make_shared<DisplayRT_Parser>();
+    auto display_property = display_parser->parseConfiguration( path, parser );
+
+    std::thread t2( 
         [&]{
-            std::shared_ptr<display_rt::example::mySubscriberLCM> subscriber = std::make_shared<display_rt::example::mySubscriberLCM>();
-
-            // spin for LCM subscriber
-            while( true )
-            {
-                try
-                {
-                    subscriber->spinOnce();
-                }
-                catch (const std::exception &e)
-                {
-                    std::cerr << "Exception: " << e.what() << std::endl;
-                }
-
-                // sleep for 10 ms
-                std::this_thread::sleep_for(std::chrono::milliseconds(100));
-            }
+            // display
+            auto display = std::make_shared<display_rt::example::myDisplayRT>( display_property ); 
+            display->Initial( argc, argv); 
+            display->Setup();
+            display->Start(); 
         }
     );
-
 
 
     // // parser
@@ -112,7 +132,8 @@ int main(int argc, char *argv[])
     // display->Start(); 
 
     t0.join();
-    t1.join();
+    // t1.join();
+    t2.join();
 
     return 0; 
 }
