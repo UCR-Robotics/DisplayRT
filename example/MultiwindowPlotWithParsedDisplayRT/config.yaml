@@ -165,7 +165,7 @@ displays:
         plot_count: 1 # number of sensors
         plots:
           - id: 0 # plot ID, IMU 0
-            axis_count: 2 # pos, vel, force
+            axis_count: 2 # linear acceleration, angular velocity 
             title: "IMU"
             axes:
               - id: 0 # axis ID
@@ -173,8 +173,8 @@ displays:
                 x_label: "Time [s]"
                 y_label: "Linear Acceleration [m/s^2]"
                 x_gap: 5 # x-axis gap
-                y_min: -2
-                y_max: 2
+                y_min: -10
+                y_max: 10
                 if_auto_scale: true
                 graph_count: 3
                 graphs:
@@ -201,8 +201,8 @@ displays:
                 x_label: "Time [s]"
                 y_label: "Angular Velocity [deg/s]"
                 x_gap: 5 # x-axis gap
-                y_min: -2
-                y_max: 2
+                y_min: -10
+                y_max: 10
                 if_auto_scale: true
                 graph_count: 3
                 graphs:

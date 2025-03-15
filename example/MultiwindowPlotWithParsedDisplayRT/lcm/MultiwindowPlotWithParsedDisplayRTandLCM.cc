@@ -65,7 +65,7 @@ int main(int argc, char *argv[])
                 }
 
                 // sleep for 10 ms
-                std::this_thread::sleep_for(std::chrono::milliseconds(500));
+                std::this_thread::sleep_for(std::chrono::milliseconds(100));
             }
         }
     );

@@ -5,6 +5,7 @@
             "includePath": [
                 "${workspaceFolder}/**", 
                 "${workspaceFolder}/include", 
+                "${workspaceFolder}/example/MultiwindowPlotWithParsedDisplayRT/lcm", 
                 // "${workspaceFolder}/thirdparty/mjbots/include", 
                 "/usr/include/eigen3", 
                 "/usr/local/include/**", 

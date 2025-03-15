@@ -2,7 +2,9 @@ message(STATUS "Entering: " ${CMAKE_CURRENT_SOURCE_DIR})
 
 find_package(LCM REQUIRED)
 
-set( LCM_EXAMPLE_SOURCE )
+set( LCM_EXAMPLE_SOURCE 
+    myDisplayWithLCM.cc 
+)
 
 set( LCM_EXAMPLE_HEADER 
     ../displayRT_parser.h 
@@ -22,7 +24,8 @@ add_executable(MultiwindowPlotWithParsedDisplayRTandLCM
 target_link_libraries(MultiwindowPlotWithParsedDisplayRTandLCM 
     displayrt 
     ${LCM_LIBRARY} 
-    # ${CMAKE_CURRENT_SOURCE_DIR}
+    # ${CMAKE_CURRENT_SOURCE_DIR} 
+    pthread 
 )
 
 target_include_directories(MultiwindowPlotWithParsedDisplayRTandLCM 
