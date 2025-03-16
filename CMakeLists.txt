@@ -1,7 +1,9 @@
 cmake_policy(SET CMP0057 NEW)
 cmake_minimum_required(VERSION 3.0)
 
-get_filename_component(PROJECT ${CMAKE_SOURCE_DIR} NAME)
+# get_filename_component(PROJECT ${CMAKE_SOURCE_DIR} NAME)
+set(PROJECT "displayrt")
+set(PROJECT_NAME ${PROJECT})
 project(${PROJECT})
 
 set(DISPLAY_RT_DIR ${CMAKE_SOURCE_DIR})
