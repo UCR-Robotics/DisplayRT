@@ -1,6 +1,7 @@
 cmake_policy(SET CMP0057 NEW)
 message(STATUS "Entering: " ${CMAKE_CURRENT_SOURCE_DIR})
 
+find_package(ament_cmake REQUIRED)
 find_package(rclcpp REQUIRED)
 find_package(std_msgs REQUIRED)
 find_package(rcutils REQUIRED)
@@ -24,16 +25,19 @@ MultiwindowPlotWithParsedDisplayRTandROS2.cc
     ${ROS2_EXAMPLE_HEADER} 
 )
 
+ament_target_dependencies(MultiwindowPlotWithParsedDisplayRTandROS2
+    rclcpp
+    std_msgs
+    rcutils
+)
+
 target_link_libraries(MultiwindowPlotWithParsedDisplayRTandROS2  
     displayrt 
-    rclcpp::rclcpp 
-    # ${CMAKE_CURRENT_SOURCE_DIR} 
     pthread 
 )
 
 target_include_directories(MultiwindowPlotWithParsedDisplayRTandROS2 
     PUBLIC 
-    # ${LCM_INCLUDE_DIR} 
     ${CMAKE_CURRENT_SOURCE_DIR} 
     ${CMAKE_CURRENT_SOURCE_DIR}/.. 
     ${rclcpp_INCLUDE_DIRS}
