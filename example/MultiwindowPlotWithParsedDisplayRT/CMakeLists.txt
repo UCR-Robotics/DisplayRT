@@ -24,3 +24,8 @@ set_target_properties(MultiwindowPlotWithParsedDisplayRT
 if( LCM_EXAMPLE )
     add_subdirectory(lcm)
 endif()
+
+# Optional: ROS2 example
+if( ROS2_EXAMPLE )
+    add_subdirectory(ros2)
+endif()

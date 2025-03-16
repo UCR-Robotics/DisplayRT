@@ -13,8 +13,9 @@
                 "/usr/include/x86_64-linux-gnu/qt5", 
                 "/usr/include/x86_64-linux-gnu/qt5/QtCore",
                 "${workspaceFolder}/thirdparty/QCustomPlot/", 
-                "${workspaceFolder}/thirdparty/mini-yaml/yaml/" 
+                "${workspaceFolder}/thirdparty/mini-yaml/yaml/", 
                 // "/usr/include/x86_64-linux-gnu/qt5/QtWidgets"
+                "/opt/ros/foxy/include"
             ],
             "defines": [],
             "compilerPath": "/usr/bin/gcc",
