@@ -74,6 +74,7 @@ class MinimalPublisher : public rclcpp::Node
     size_t count_;
 };
 
+// from ROS2 humble
 class MinimalSubscriber : public rclcpp::Node
 {
   public:

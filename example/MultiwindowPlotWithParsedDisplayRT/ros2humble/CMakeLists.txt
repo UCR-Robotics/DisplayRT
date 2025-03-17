@@ -40,24 +40,24 @@ set( ROS2_EXAMPLE_HEADER
     # msg/servos_t.hpp 
 )
 
-add_executable(MultiwindowPlotWithParsedDisplayRTandROS2 
-MultiwindowPlotWithParsedDisplayRTandROS2.cc 
+add_executable(MultiwindowPlotWithParsedDisplayRTandROS2Humble 
+MultiwindowPlotWithParsedDisplayRTandROS2Humble.cc 
     ${ROS2_EXAMPLE_SOURCE} 
     ${ROS2_EXAMPLE_HEADER} 
 )
 
-ament_target_dependencies(MultiwindowPlotWithParsedDisplayRTandROS2
+ament_target_dependencies(MultiwindowPlotWithParsedDisplayRTandROS2Humble
     rclcpp
     std_msgs
     rcutils
 )
 
-target_link_libraries(MultiwindowPlotWithParsedDisplayRTandROS2  
+target_link_libraries(MultiwindowPlotWithParsedDisplayRTandROS2Humble  
     displayrt 
     pthread 
 )
 
-target_include_directories(MultiwindowPlotWithParsedDisplayRTandROS2 
+target_include_directories(MultiwindowPlotWithParsedDisplayRTandROS2Humble 
     PUBLIC 
     ${CMAKE_CURRENT_SOURCE_DIR} 
     ${CMAKE_CURRENT_SOURCE_DIR}/.. 
@@ -65,7 +65,7 @@ target_include_directories(MultiwindowPlotWithParsedDisplayRTandROS2
     ${std_msgs_INCLUDE_DIRS} 
 )
 
-set_target_properties(MultiwindowPlotWithParsedDisplayRTandROS2
+set_target_properties(MultiwindowPlotWithParsedDisplayRTandROS2Humble
     PROPERTIES
     RUNTIME_OUTPUT_DIRECTORY "${DISPLAY_RT_DIR}/bin"
 )

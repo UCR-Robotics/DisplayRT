@@ -1,0 +1,9 @@
+int64 timestamp
+int8 id
+int8 parent_id
+float32[4] quaternion
+float32[3] euler_rate
+float32[3] acceleration
+float32[4] raw_quaternion
+float32[3] raw_euler_rate
+float32[3] raw_acceleration

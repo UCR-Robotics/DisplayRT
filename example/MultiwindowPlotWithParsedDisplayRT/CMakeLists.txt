@@ -25,7 +25,12 @@ if( LCM_EXAMPLE )
     add_subdirectory(lcm)
 endif()
 
-# Optional: ROS2 example
-if( ROS2_EXAMPLE )
-    add_subdirectory(ros2)
+# Optional: ROS2 Humble example
+if( ROS2HUMBLE_EXAMPLE )
+    add_subdirectory(ros2humble)
+endif()
+
+# Optional: ROS2 Foxy example
+if( ROS2FOXY_EXAMPLE )
+    add_subdirectory(ros2foxy)
 endif()
