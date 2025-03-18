@@ -29,21 +29,23 @@
 #include <filesystem>
 #include <thread>
 #include <chrono>
-#include "rclcpp/rclcpp.hpp"
-#include "std_msgs/msg/string.hpp"
+
 
 #include <QtWidgets/QApplication>
 #include <QtWidgets/QMainWindow>
 #include <QtWidgets/QGridLayout>
 #include <QtCore/QTimer>
 
-// #include "qcustomplot.h"
+// displayrt
 #include "displayRT.h"
 #include "displayRT_parser.h"
 
-#include <lcm/lcm-cpp.hpp>
-
 // #include "myDisplayWithLCM.h"
+
+// ROS2
+#include "rclcpp/rclcpp.hpp"
+#include "std_msgs/msg/string.hpp"
+#include "ros2foxy/msg/imu.hpp"
 
 
 using namespace display_rt; // for DisplayRT
@@ -74,6 +76,42 @@ class MinimalPublisher : public rclcpp::Node
     size_t count_;
 };
 
+class MinimalPublisher2 : public rclcpp::Node
+{
+  public:
+    MinimalPublisher2()
+    : Node("minimal_publisher_2"), count_(0)
+    {
+      publisher_ = this->create_publisher<ros2foxy::msg::IMU>("imu", 10);
+      timer_ = this->create_wall_timer(
+      500ms, std::bind(&MinimalPublisher2::timer_callback, this));
+    }
+
+  private:
+    void timer_callback()
+    {
+      auto message = ros2foxy::msg::IMU();
+      message.timestamp = count_;
+      message.id = 1;
+      message.parent_id = 0;
+      message.quaternion[0] = 0.0;
+      message.quaternion[1] = 0.0;
+      message.quaternion[2] = 0.0;
+      message.quaternion[3] = 1.0;
+      message.euler_rate[0] = 1.0;
+      message.euler_rate[1] = 1.0;
+      message.euler_rate[2] = 1.0;
+      message.acceleration[0] = 2.0;
+      message.acceleration[1] = 2.0;
+      message.acceleration[2] = 2.0;
+      RCLCPP_INFO(this->get_logger(), "Publishing: '%d'", message.timestamp);
+      publisher_->publish(message);
+    }
+    rclcpp::TimerBase::SharedPtr timer_;
+    rclcpp::Publisher<ros2foxy::msg::IMU>::SharedPtr publisher_;
+    size_t count_;
+};
+
 // from ROS2 foxy
 class MinimalSubscriber : public rclcpp::Node
 {
@@ -93,6 +131,34 @@ class MinimalSubscriber : public rclcpp::Node
     rclcpp::Subscription<std_msgs::msg::String>::SharedPtr subscription_;
 };
 
+class MinimalSubscriber2 : public rclcpp::Node
+{
+  public:
+    MinimalSubscriber2()
+    : Node("minimal_subscriber_2")
+    {
+      subscription_ = this->create_subscription<ros2foxy::msg::IMU>(
+      "imu", 10, std::bind(&MinimalSubscriber2::topic_callback, this, _1));
+    }
+
+  private:
+    void topic_callback(const ros2foxy::msg::IMU::SharedPtr msg) const
+    {
+      RCLCPP_INFO(
+        this->get_logger(), 
+        "I heard: timestamp = %d, IMU ID = %d, Parent ID = %d\n"
+        "Quaternion = [%f, %f, %f, %f]\n"
+        "Euler Rate = [%f, %f, %f]\n"
+        "Acceleration = [%f, %f, %f]", 
+        msg->timestamp, msg->id, msg->parent_id, 
+        msg->quaternion[0], msg->quaternion[1], msg->quaternion[2], msg->quaternion[3],
+        msg->euler_rate[0], msg->euler_rate[1], msg->euler_rate[2],
+        msg->acceleration[0], msg->acceleration[1], msg->acceleration[2]
+      );
+    }
+    rclcpp::Subscription<ros2foxy::msg::IMU>::SharedPtr subscription_;
+};
+
 int main(int argc, char *argv[])
 {
     // rclcpp::init(argc, argv);
@@ -101,26 +167,46 @@ int main(int argc, char *argv[])
 
     rclcpp::init(argc, argv);
 
+    // // ROS2 publisher thread
+    // std::thread t0(
+    //     [&]{
+    //         // rclcpp::init(argc, argv);
+    //         rclcpp::spin(std::make_shared<MinimalPublisher>());
+    //         // rclcpp::shutdown();
+    //     }
+    // );
+
+    // // ROS2 subscriber thread
+    // std::thread t1(
+    //     [&]{
+    //         // rclcpp::init(argc, argv);
+    //         rclcpp::spin(std::make_shared<MinimalSubscriber>());
+    //         // rclcpp::shutdown();
+    //     }
+    // );
+
     // ROS2 publisher thread
-    std::thread t0(
+    std::thread t2(
         [&]{
             // rclcpp::init(argc, argv);
-            rclcpp::spin(std::make_shared<MinimalPublisher>());
+            rclcpp::spin(std::make_shared<MinimalPublisher2>());
             // rclcpp::shutdown();
         }
     );
 
     // ROS2 subscriber thread
-    std::thread t1(
+    std::thread t3(
         [&]{
             // rclcpp::init(argc, argv);
-            rclcpp::spin(std::make_shared<MinimalSubscriber>());
+            rclcpp::spin(std::make_shared<MinimalSubscriber2>());
             // rclcpp::shutdown();
         }
     );
 
-    t0.join();
-    t1.join();
+    // t0.join();
+    // t1.join();
+    t2.join();
+    t3.join();
 
     rclcpp::shutdown();
 
