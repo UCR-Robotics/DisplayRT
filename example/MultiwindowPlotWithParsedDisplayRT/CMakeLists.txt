@@ -30,7 +30,7 @@ if( ROS2HUMBLE_EXAMPLE )
     add_subdirectory(ros2humble)
 endif()
 
-# Optional: ROS2 Foxy example
-if( ROS2FOXY_EXAMPLE )
-    add_subdirectory(ros2foxy)
-endif()
+# # Optional: ROS2 Foxy example
+# if( ROS2FOXY_EXAMPLE )
+#     add_subdirectory(ros2foxy)
+# endif()

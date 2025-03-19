@@ -2,16 +2,20 @@
 
 find_path(QCustomPlot_INCLUDE_DIR
           NAMES # all header files 
-          qcustomplot.h
+            qcustomplot.h
           PATHS # possible paths to search the header files
-          ${CMAKE_SOURCE_DIR}/thirdparty/QCustomPlot
+            ${CMAKE_SOURCE_DIR}/thirdparty/QCustomPlot 
+            ${CMAKE_SOURCE_DIR}/../thirdparty/QCustomPlot
+            ${CMAKE_SOURCE_DIR}/../../thirdparty/QCustomPlot
           )
 
 find_library(QCustomPlot_LIBRARY
              NAMES # lib object, like .a, .so
-             qcustomplot 
+                qcustomplot 
              PATHS # possible paths to search the lib object
-             ${CMAKE_SOURCE_DIR}/thirdparty/QCustomPlot/lib
+                ${CMAKE_SOURCE_DIR}/thirdparty/QCustomPlot/lib 
+                ${CMAKE_SOURCE_DIR}/../thirdparty/QCustomPlot/lib
+                ${CMAKE_SOURCE_DIR}/../../thirdparty/QCustomPlot/lib
              )
 
 if(QCustomPlot_INCLUDE_DIR AND QCustomPlot_LIBRARY)

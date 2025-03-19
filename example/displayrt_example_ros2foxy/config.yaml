@@ -1,0 +1,865 @@
+displays: 
+  Display0: 
+    id: 0
+    window_count: 2
+    messages: 
+      servos: 
+        enable: true
+        id: 0 # window ID
+        channel: servos
+        px: 0 # window position x
+        py: 0 # window position y
+        width: 800 # window width in pixels
+        height: 1200 # window height in pixels
+        plot_count: 2 # number of servos
+        plots:
+          - id: 0 # plot ID = servo ID
+            axis_count: 3 # pos, vel, force
+            title: "Revolute Servo 0"
+            axes:
+              - id: 0 # axis ID
+                title: "Position"
+                x_label: "Time [s]"
+                y_label: "Position [rad]"
+                x_gap: 5 # x-axis gap
+                y_min: -2
+                y_max: 2
+                if_auto_scale: true
+                graph_count: 2
+                graphs:
+                  - id: 0 # graph ID, estimation
+                    name: "Estimation"
+                    line_style: "line"
+                    pen_color: "red"
+                    pen_style: "solid"
+                    pen_width: 1
+                  - id: 1 # graph ID, command
+                    name: "Command"
+                    line_style: "line"
+                    pen_color: "blue"
+                    pen_style: "dash"
+                    pen_width: 2
+              - id: 1 # axis ID
+                title: "Velocity"
+                x_label: "Time [s]"
+                y_label: "Velocity [rad/s]"
+                x_gap: 5 # x-axis gap
+                y_min: -2
+                y_max: 2
+                if_auto_scale: true
+                graph_count: 2
+                graphs:
+                  - id: 0 # graph ID, estimation
+                    name: "Estimation"
+                    line_style: "line"
+                    pen_color: "red"
+                    pen_style: "solid"
+                    pen_width: 1
+                  - id: 1 # graph ID, command
+                    name: "Command"
+                    line_style: "line"
+                    pen_color: "blue"
+                    pen_style: "dash"
+                    pen_width: 2
+              - id: 2 # axis ID
+                title: "Torque"
+                x_label: "Time [s]"
+                y_label: "Torque [Nm]"
+                x_gap: 5 # x-axis gap
+                y_min: -10
+                y_max: 10
+                if_auto_scale: true
+                graph_count: 2
+                graphs:
+                  - id: 0 # graph ID, estimation
+                    name: "Estimation"
+                    line_style: "line"
+                    pen_color: "red"
+                    pen_style: "solid"
+                    pen_width: 1
+                  - id: 1 # graph ID, command
+                    name: "Command"
+                    line_style: "line"
+                    pen_color: "blue"
+                    pen_style: "dash"
+                    pen_width: 2
+          - id: 1
+            axis_count: 3
+            title: "Revolute Servo 1"
+            axes:
+              - id: 0
+                title: "Position"
+                x_label: "Time [s]"
+                y_label: "Position [m]"
+                x_gap: 5
+                y_min: -2
+                y_max: 2
+                if_auto_scale: true
+                graph_count: 2
+                graphs:
+                  - id: 0
+                    name: "Estimation"
+                    line_style: "line"
+                    pen_color: "red"
+                    pen_style: "solid"
+                    pen_width: 1
+                  - id: 1
+                    name: "Command"
+                    line_style: "line"
+                    pen_color: "blue"
+                    pen_style: "dash"
+                    pen_width: 2
+              - id: 1
+                title: "Velocity"
+                x_label: "Time [s]"
+                y_label: "Velocity [rad/s]"
+                x_gap: 5
+                y_min: -2
+                y_max: 2
+                if_auto_scale: true
+                graph_count: 2
+                graphs:
+                  - id: 0
+                    name: "Estimation"
+                    line_style: "line"
+                    pen_color: "red"
+                    pen_style: "solid"
+                    pen_width: 1
+                  - id: 1
+                    name: "Command"
+                    line_style: "line"
+                    pen_color: "blue"
+                    pen_style: "dash"
+                    pen_width: 2
+              - id: 2
+                title: "Force"
+                x_label: "Time [s]"
+                y_label: "Force [N]"
+                x_gap: 5
+                y_min: -10
+                y_max: 10
+                if_auto_scale: true
+                graph_count: 2
+                graphs:
+                  - id: 0
+                    name: "Estimation"
+                    line_style: "line"
+                    pen_color: "red"
+                    pen_style: "solid"
+                    pen_width: 1
+                  - id: 1
+                    name: "Command"
+                    line_style: "line"
+                    pen_color: "blue"
+                    pen_style: "dash"
+                    pen_width: 2
+         
+      sensors:
+        enable: true
+        id: 1 # window ID
+        channel: sensors
+        px: 900 # window position x
+        py: 0 # window position y
+        width: 800 # window width in pixels
+        height: 1000 # window height in pixels
+        plot_count: 1 # number of sensors
+        plots:
+          - id: 0 # plot ID, IMU 0
+            axis_count: 2 # linear acceleration, angular velocity 
+            title: "IMU"
+            axes:
+              - id: 0 # axis ID
+                title: "Linear Acceleration"
+                x_label: "Time [s]"
+                y_label: "Linear Acceleration [m/s^2]"
+                x_gap: 5 # x-axis gap
+                y_min: -10
+                y_max: 10
+                if_auto_scale: true
+                graph_count: 3
+                graphs:
+                  - id: 0 # graph ID, estimation
+                    name: "accle-x"
+                    line_style: "line"
+                    pen_color: "red"
+                    pen_style: "solid"
+                    pen_width: 1
+                  - id: 1 # graph ID, command
+                    name: "accle-y"
+                    line_style: "line"
+                    pen_color: "blue"
+                    pen_style: "solid"
+                    pen_width: 1
+                  - id: 2 # graph ID, command
+                    name: "accle-z"
+                    line_style: "line"
+                    pen_color: "green"
+                    pen_style: "solid"
+                    pen_width: 1
+              - id: 1 # axis ID
+                title: "Angular Velocity"
+                x_label: "Time [s]"
+                y_label: "Angular Velocity [deg/s]"
+                x_gap: 5 # x-axis gap
+                y_min: -10
+                y_max: 10
+                if_auto_scale: true
+                graph_count: 3
+                graphs:
+                  - id: 0 # graph ID, estimation
+                    name: "ang-vel-x"
+                    line_style: "line"
+                    pen_color: "red"
+                    pen_style: "solid"
+                    pen_width: 1
+                  - id: 1 # graph ID, command
+                    name: "ang-vel-y"
+                    line_style: "line"
+                    pen_color: "blue"
+                    pen_style: "solid"
+                    pen_width: 1
+                  - id: 2 # graph ID, command
+                    name: "ang-vel-z"
+                    line_style: "line"
+                    pen_color: "green"
+                    pen_style: "solid"
+                    pen_width: 1
+              
+
+
+
+                      
+      # robot: # robot-related messages
+      #   servos: 
+      #     enable: false
+      #     id: 0 # window ID
+      #     channel: servos
+      #     px: 0 # window position x
+      #     py: 0 # window position y
+      #     width: 800 # window width in pixels
+      #     height: 1000 # window height in pixels
+      #     plot_count: 3 # number of servos
+      #     plots:
+      #       - id: 0 # plot ID = servo ID
+      #         axis_count: 3 # pos, vel, force
+      #         title: "Servo 0"
+      #         axes:
+      #           - id: 0 # axis ID
+      #             title: "Position"
+      #             x_label: "Time [s]"
+      #             y_label: "Position [rad]"
+      #             x_gap: 5 # x-axis gap
+      #             y_min: -2
+      #             y_max: 2
+      #             if_auto_scale: true
+      #             graph_count: 2
+      #             graphs:
+      #               - id: 0 # graph ID, estimation
+      #                 name: "Estimation"
+      #                 line_style: "line"
+      #                 pen_color: "red"
+      #                 pen_style: "solid"
+      #                 pen_width: 1
+      #               - id: 1 # graph ID, command
+      #                 name: "Command"
+      #                 line_style: "line"
+      #                 pen_color: "blue"
+      #                 pen_style: "dash"
+      #                 pen_width: 2
+      #           - id: 1 # axis ID
+      #             title: "Velocity"
+      #             x_label: "Time [s]"
+      #             y_label: "Velocity [rad/s]"
+      #             x_gap: 5 # x-axis gap
+      #             y_min: -2
+      #             y_max: 2
+      #             if_auto_scale: true
+      #             graph_count: 2
+      #             graphs:
+      #               - id: 0 # graph ID, estimation
+      #                 name: "Estimation"
+      #                 line_style: "line"
+      #                 pen_color: "red"
+      #                 pen_style: "solid"
+      #                 pen_width: 1
+      #               - id: 1 # graph ID, command
+      #                 name: "Command"
+      #                 line_style: "line"
+      #                 pen_color: "blue"
+      #                 pen_style: "dash"
+      #                 pen_width: 2
+      #           - id: 2 # axis ID
+      #             title: "Torque"
+      #             x_label: "Time [s]"
+      #             y_label: "Torque [Nm]"
+      #             x_gap: 5 # x-axis gap
+      #             y_min: -10
+      #             y_max: 10
+      #             if_auto_scale: true
+      #             graph_count: 2
+      #             graphs:
+      #               - id: 0 # graph ID, estimation
+      #                 name: "Estimation"
+      #                 line_style: "line"
+      #                 pen_color: "red"
+      #                 pen_style: "solid"
+      #                 pen_width: 1
+      #               - id: 1 # graph ID, command
+      #                 name: "Command"
+      #                 line_style: "line"
+      #                 pen_color: "blue"
+      #                 pen_style: "dash"
+      #                 pen_width: 2
+      #       - id: 1
+      #         axis_count: 3
+      #         title: "Servo 1"
+      #         axes:
+      #           - id: 0
+      #             title: "Position"
+      #             x_label: "Time [s]"
+      #             y_label: "Position [rad]"
+      #             x_gap: 5
+      #             y_min: -2
+      #             y_max: 2
+      #             if_auto_scale: true
+      #             graph_count: 2
+      #             graphs:
+      #               - id: 0
+      #                 name: "Estimation"
+      #                 line_style: "line"
+      #                 pen_color: "red"
+      #                 pen_style: "solid"
+      #                 pen_width: 1
+      #               - id: 1
+      #                 name: "Command"
+      #                 line_style: "line"
+      #                 pen_color: "blue"
+      #                 pen_style: "dash"
+      #                 pen_width: 2
+      #           - id: 1
+      #             title: "Velocity"
+      #             x_label: "Time [s]"
+      #             y_label: "Velocity [rad/s]"
+      #             x_gap: 5
+      #             y_min: -2
+      #             y_max: 2
+      #             if_auto_scale: true
+      #             graph_count: 2
+      #             graphs:
+      #               - id: 0
+      #                 name: "Estimation"
+      #                 line_style: "line"
+      #                 pen_color: "red"
+      #                 pen_style: "solid"
+      #                 pen_width: 1
+      #               - id: 1
+      #                 name: "Command"
+      #                 line_style: "line"
+      #                 pen_color: "blue"
+      #                 pen_style: "dash"
+      #                 pen_width: 2
+      #           - id: 2
+      #             title: "Force"
+      #             x_label: "Time [s]"
+      #             y_label: "Force [N]"
+      #             x_gap: 5
+      #             y_min: -10
+      #             y_max: 10
+      #             if_auto_scale: true
+      #             graph_count: 2
+      #             graphs:
+      #               - id: 0
+      #                 name: "Estimation"
+      #                 line_style: "line"
+      #                 pen_color: "red"
+      #                 pen_style: "solid"
+      #                 pen_width: 1
+      #               - id: 1
+      #                 name: "Command"
+      #                 line_style: "line"
+      #                 pen_color: "blue"
+      #                 pen_style: "dash"
+      #                 pen_width: 2
+      #       - id: 2
+      #         axis_count: 3
+      #         title: "Servo 2"
+      #         axes:
+      #           - id: 0
+      #             title: "Position"
+      #             x_label: "Time [s]"
+      #             y_label: "Position [rad]"
+      #             x_gap: 5
+      #             y_min: -2
+      #             y_max: 2
+      #             if_auto_scale: true
+      #             graph_count: 2
+      #             graphs:
+      #               - id: 0
+      #                 name: "Estimation"
+      #                 line_style: "line"
+      #                 pen_color: "red"
+      #                 pen_style: "solid"
+      #                 pen_width: 1
+      #               - id: 1
+      #                 name: "Command"
+      #                 line_style: "line"
+      #                 pen_color: "blue"
+      #                 pen_style: "dash"
+      #                 pen_width: 2
+      #           - id: 1
+      #             title: "Velocity"
+      #             x_label: "Time [s]"
+      #             y_label: "Velocity [rad/s]"
+      #             x_gap: 5
+      #             y_min: -2
+      #             y_max: 2
+      #             if_auto_scale: true
+      #             graph_count: 2
+      #             graphs:
+      #               - id: 0
+      #                 name: "Estimation"
+      #                 line_style: "line"
+      #                 pen_color: "red"
+      #                 pen_style: "solid"
+      #                 pen_width: 1
+      #               - id: 1
+      #                 name: "Command"
+      #                 line_style: "line"
+      #                 pen_color: "blue"
+      #                 pen_style: "dash"
+      #                 pen_width: 2
+      #           - id: 2
+      #             title: "Force"
+      #             x_label: "Time [s]"
+      #             y_label: "Force [N]"
+      #             x_gap: 5
+      #             y_min: -10
+      #             y_max: 10
+      #             if_auto_scale: true
+      #             graph_count: 2
+      #             graphs:
+      #               - id: 0
+      #                 name: "Estimation"
+      #                 line_style: "line"
+      #                 pen_color: "red"
+      #                 pen_style: "solid"
+      #                 pen_width: 1
+      #               - id: 1
+      #                 name: "Command"
+      #                 line_style: "line"
+      #                 pen_color: "blue"
+      #                 pen_style: "dash"
+      #                 pen_width: 2  
+      #       - id: 3
+      #         axis_count: 3
+      #         title: "Servo 3"
+      #         axes:
+      #           - id: 0
+      #             title: "Position"
+      #             x_label: "Time [s]"
+      #             y_label: "Position [rad]"
+      #             x_gap: 5
+      #             y_min: -2
+      #             y_max: 2
+      #             if_auto_scale: true
+      #             graph_count: 2
+      #             graphs:
+      #               - id: 0
+      #                 name: "Estimation"
+      #                 line_style: "line"
+      #                 pen_color: "red"
+      #                 pen_style: "solid"
+      #                 pen_width: 1
+      #               - id: 1
+      #                 name: "Command"
+      #                 line_style: "line"
+      #                 pen_color: "blue"
+      #                 pen_style: "dash"
+      #                 pen_width: 2
+      #           - id: 1
+      #             title: "Velocity"
+      #             x_label: "Time [s]"
+      #             y_label: "Velocity [rad/s]"
+      #             x_gap: 5
+      #             y_min: -2
+      #             y_max: 2
+      #             if_auto_scale: true
+      #             graph_count: 2
+      #             graphs:
+      #               - id: 0
+      #                 name: "Estimation"
+      #                 line_style: "line"
+      #                 pen_color: "red"
+      #                 pen_style: "solid"
+      #                 pen_width: 1
+      #               - id: 1
+      #                 name: "Command"
+      #                 line_style: "line"
+      #                 pen_color: "blue"
+      #                 pen_style: "dash"
+      #                 pen_width: 2
+      #           - id: 2
+      #             title: "Force"
+      #             x_label: "Time [s]"
+      #             y_label: "Force [N]"
+      #             x_gap: 5
+      #             y_min: -10
+      #             y_max: 10
+      #             if_auto_scale: true
+      #             graph_count: 2
+      #             graphs:
+      #               - id: 0
+      #                 name: "Estimation"
+      #                 line_style: "line"
+      #                 pen_color: "red"
+      #                 pen_style: "solid"
+      #                 pen_width: 1
+      #               - id: 1
+      #                 name: "Command"
+      #                 line_style: "line"
+      #                 pen_color: "blue"
+      #                 pen_style: "dash"
+      #                 pen_width: 2
+        
+      #   sensors:
+      #     enable: true
+      #     id: 1 # window ID
+      #     channel: sensors_all
+      #     px: 0 # window position x
+      #     py: 0 # window position y
+      #     width: 800 # window width in pixels
+      #     height: 1000 # window height in pixels
+      #     plot_count: 1 # number of servos
+      #     plots:
+      #       - id: 0 # plot ID, IMU 0
+      #         axis_count: 3 # pos, vel, force
+      #         title: "IMU 0"
+      #         axes:
+      #           - id: 0 # axis ID
+      #             title: "Acceleration"
+      #             x_label: "Time [s]"
+      #             y_label: "Acceleration [m/s^2]"
+      #             x_gap: 5 # x-axis gap
+      #             y_min: -2
+      #             y_max: 2
+      #             if_auto_scale: true
+      #             graph_count: 3
+      #             graphs:
+      #               - id: 0 # graph ID, estimation
+      #                 name: "accle-x"
+      #                 line_style: "line"
+      #                 pen_color: "red"
+      #                 pen_style: "solid"
+      #                 pen_width: 1
+      #               - id: 1 # graph ID, command
+      #                 name: "accle-y"
+      #                 line_style: "line"
+      #                 pen_color: "blue"
+      #                 pen_style: "solid"
+      #                 pen_width: 1
+      #               - id: 2 # graph ID, command
+      #                 name: "accle-z"
+      #                 line_style: "line"
+      #                 pen_color: "green"
+      #                 pen_style: "solid"
+      #                 pen_width: 1
+      #           - id: 1 # axis ID
+      #             title: "Angular Velocity"
+      #             x_label: "Time [s]"
+      #             y_label: "Angular Velocity [deg/s]"
+      #             x_gap: 5 # x-axis gap
+      #             y_min: -2
+      #             y_max: 2
+      #             if_auto_scale: true
+      #             graph_count: 3
+      #             graphs:
+      #               - id: 0 # graph ID, estimation
+      #                 name: "ang-vel-x"
+      #                 line_style: "line"
+      #                 pen_color: "red"
+      #                 pen_style: "solid"
+      #                 pen_width: 1
+      #               - id: 1 # graph ID, command
+      #                 name: "ang-vel-y"
+      #                 line_style: "line"
+      #                 pen_color: "blue"
+      #                 pen_style: "solid"
+      #                 pen_width: 1
+      #               - id: 2 # graph ID, command
+      #                 name: "ang-vel-z"
+      #                 line_style: "line"
+      #                 pen_color: "green"
+      #                 pen_style: "solid"
+      #                 pen_width: 1
+      #           - id: 2 # axis ID
+      #             title: "Rotation"
+      #             x_label: "Time [s]"
+      #             y_label: "Euler Angle [deg]"
+      #             x_gap: 5 # x-axis gap
+      #             y_min: -10
+      #             y_max: 10
+      #             if_auto_scale: true
+      #             graph_count: 3
+      #             graphs:
+      #               - id: 0 # graph ID, estimation
+      #                 name: "roll"
+      #                 line_style: "line"
+      #                 pen_color: "red"
+      #                 pen_style: "solid"
+      #                 pen_width: 1
+      #               - id: 1 # graph ID, command
+      #                 name: "pitch"
+      #                 line_style: "line"
+      #                 pen_color: "blue"
+      #                 pen_style: "solid"
+      #                 pen_width: 1
+      #               - id: 2 # graph ID, command
+      #                 name: "yaw"
+      #                 line_style: "line"
+      #                 pen_color: "green"
+      #                 pen_style: "solid"
+      #                 pen_width: 1
+
+
+      # controller: # controller-related messages
+      #   whole_body_estimator:
+      #     enable: true
+      #     id: 8 # window ID
+      #     channel: whole_body_estimator
+      #     px: 900 # window position x
+      #     py: 0 # window position y
+      #     width: 800 # window width in pixels
+      #     height: 1000 # window height in pixels
+      #     plot_count: 2 # mean and covariance
+      #     plots:
+      #       - id: 0 # plot ID, mean
+      #         axis_count: 3 # pos-xyz, vel-xyz, euler-xyz 
+      #         title: "Mean"
+      #         axes:
+      #           - id: 0 # axis ID
+      #             title: "Position"
+      #             x_label: "Time [s]"
+      #             y_label: "Position [m]"
+      #             x_gap: 5 # x-axis gap
+      #             y_min: -2
+      #             y_max: 2
+      #             if_auto_scale: true
+      #             graph_count: 6
+      #             graphs:
+      #               - id: 0 # graph ID, est pos-x
+      #                 name: "est pos-x"
+      #                 line_style: "line"
+      #                 pen_color: "red"
+      #                 pen_style: "solid"
+      #                 pen_width: 1
+      #               - id: 1 # graph ID, est pos-y
+      #                 name: "est pos-y"
+      #                 line_style: "line"
+      #                 pen_color: "blue"
+      #                 pen_style: "solid"
+      #                 pen_width: 1
+      #               - id: 2 # graph ID, est pos-z
+      #                 name: "est pos-z"
+      #                 line_style: "line"
+      #                 pen_color: "green"
+      #                 pen_style: "solid"
+      #                 pen_width: 1
+      #               - id: 3 # graph ID, ref pos-x
+      #                 name: "ref pos-x"
+      #                 line_style: "line"
+      #                 pen_color: "red"
+      #                 pen_style: "dash"
+      #                 pen_width: 2
+      #               - id: 4 # graph ID, ref pos-y
+      #                 name: "ref pos-y"
+      #                 line_style: "line"
+      #                 pen_color: "blue"
+      #                 pen_style: "dash"
+      #                 pen_width: 2
+      #               - id: 5 # graph ID, ref pos-z
+      #                 name: "ref pos-z"
+      #                 line_style: "line"
+      #                 pen_color: "green"
+      #                 pen_style: "dash"
+      #                 pen_width: 2
+      #           - id: 1 # axis ID
+      #             title: "Velocity"
+      #             x_label: "Time [s]"
+      #             y_label: "Velocity [m/s]"
+      #             x_gap: 5 # x-axis gap
+      #             y_min: -2
+      #             y_max: 2
+      #             if_auto_scale: true
+      #             graph_count: 6
+      #             graphs:
+      #               - id: 0 # graph ID, est vel-x
+      #                 name: "est vel-x"
+      #                 line_style: "line"
+      #                 pen_color: "red"
+      #                 pen_style: "solid"
+      #                 pen_width: 1
+      #               - id: 1 # graph ID, est vel-y
+      #                 name: "est vel-y"
+      #                 line_style: "line"
+      #                 pen_color: "blue"
+      #                 pen_style: "solid"
+      #                 pen_width: 1
+      #               - id: 2 # graph ID, est vel-z
+      #                 name: "est vel-z"
+      #                 line_style: "line"
+      #                 pen_color: "green"
+      #                 pen_style: "solid"
+      #                 pen_width: 1
+      #               - id: 3 # graph ID, ref vel-x
+      #                 name: "ref vel-x"
+      #                 line_style: "line"
+      #                 pen_color: "red"
+      #                 pen_style: "dash"
+      #                 pen_width: 2
+      #               - id: 4 # graph ID, ref vel-y
+      #                 name: "ref vel-y"
+      #                 line_style: "line"
+      #                 pen_color: "blue"
+      #                 pen_style: "dash"
+      #                 pen_width: 2
+      #               - id: 5 # graph ID, ref vel-z
+      #                 name: "ref vel-z"
+      #                 line_style: "line"
+      #                 pen_color: "green"
+      #                 pen_style: "dash"
+      #                 pen_width: 2
+      #           - id: 2 # axis ID
+      #             title: "Euler"
+      #             x_label: "Time [s]"
+      #             y_label: "Euler [deg]"
+      #             x_gap: 5 # x-axis gap
+      #             y_min: -2
+      #             y_max: 2
+      #             if_auto_scale: true
+      #             graph_count: 6
+      #             graphs:
+      #               - id: 0 # graph ID, est euler-x
+      #                 name: "est euler-x"
+      #                 line_style: "line"
+      #                 pen_color: "red"
+      #                 pen_style: "solid"
+      #                 pen_width: 1
+      #               - id: 1 # graph ID, est euler-y
+      #                 name: "est euler-y"
+      #                 line_style: "line"
+      #                 pen_color: "blue"
+      #                 pen_style: "solid"
+      #                 pen_width: 1
+      #               - id: 2 # graph ID, est euler-z
+      #                 name: "est euler-z"
+      #                 line_style: "line"
+      #                 pen_color: "green"
+      #                 pen_style: "solid"
+      #                 pen_width: 1
+      #               - id: 3 # graph ID, ref euler-x
+      #                 name: "ref euler-x"
+      #                 line_style: "line"
+      #                 pen_color: "red"
+      #                 pen_style: "dash"
+      #                 pen_width: 2
+      #               - id: 4 # graph ID, ref euler-y
+      #                 name: "ref euler-y"
+      #                 line_style: "line"
+      #                 pen_color: "blue"
+      #                 pen_style: "dash"
+      #                 pen_width: 2
+      #               - id: 5 # graph ID, ref euler-z
+      #                 name: "ref euler-z"
+      #                 line_style: "line"
+      #                 pen_color: "green"
+      #                 pen_style: "dash"
+      #                 pen_width: 2
+      #       - id: 1 # plot ID, covariance
+      #         axis_count: 3 # pos-xyz, vel-xyz, euler-xyz 
+      #         title: "Covariance"
+      #         axes:
+      #           - id: 0 # axis ID
+      #             title: "Position"
+      #             x_label: "Time [s]"
+      #             y_label: "Position Cov [m2]"
+      #             x_gap: 5 # x-axis gap
+      #             y_min: -2
+      #             y_max: 2
+      #             if_auto_scale: true
+      #             graph_count: 3
+      #             graphs:
+      #               - id: 0 # graph ID, est pos-x
+      #                 name: "est pos-x"
+      #                 line_style: "line"
+      #                 pen_color: "red"
+      #                 pen_style: "solid"
+      #                 pen_width: 1
+      #               - id: 1 # graph ID, est pos-y
+      #                 name: "est pos-y"
+      #                 line_style: "line"
+      #                 pen_color: "blue"
+      #                 pen_style: "solid"
+      #                 pen_width: 1
+      #               - id: 2 # graph ID, est pos-z
+      #                 name: "est pos-z"
+      #                 line_style: "line"
+      #                 pen_color: "green"
+      #                 pen_style: "solid"
+      #                 pen_width: 1
+      #           - id: 1 # axis ID
+      #             title: "Velocity"
+      #             x_label: "Time [s]"
+      #             y_label: "Velocity Cov [m2/s2]"
+      #             x_gap: 5 # x-axis gap
+      #             y_min: -2
+      #             y_max: 2
+      #             if_auto_scale: true
+      #             graph_count: 3
+      #             graphs:
+      #               - id: 0 # graph ID, est vel-x
+      #                 name: "est vel-x"
+      #                 line_style: "line"
+      #                 pen_color: "red"
+      #                 pen_style: "solid"
+      #                 pen_width: 1
+      #               - id: 1 # graph ID, est vel-y
+      #                 name: "est vel-y"
+      #                 line_style: "line"
+      #                 pen_color: "blue"
+      #                 pen_style: "solid"
+      #                 pen_width: 1
+      #               - id: 2 # graph ID, est vel-z
+      #                 name: "est vel-z"
+      #                 line_style: "line"
+      #                 pen_color: "green"
+      #                 pen_style: "solid"
+      #                 pen_width: 1
+      #           - id: 2 # axis ID
+      #             title: "Euler"
+      #             x_label: "Time [s]"
+      #             y_label: "Euler Cov [deg2]"
+      #             x_gap: 5 # x-axis gap
+      #             y_min: -2
+      #             y_max: 2
+      #             if_auto_scale: true
+      #             graph_count: 3
+      #             graphs:
+      #               - id: 0 # graph ID, est euler-x
+      #                 name: "est euler-x"
+      #                 line_style: "line"
+      #                 pen_color: "red"
+      #                 pen_style: "solid"
+      #                 pen_width: 1
+      #               - id: 1 # graph ID, est euler-y
+      #                 name: "est euler-y"
+      #                 line_style: "line"
+      #                 pen_color: "blue"
+      #                 pen_style: "solid"
+      #                 pen_width: 1
+      #               - id: 2 # graph ID, est euler-z
+      #                 name: "est euler-z"
+      #                 line_style: "line"
+      #                 pen_color: "green"
+      #                 pen_style: "solid"
+      #                 pen_width: 1
+                

@@ -29,7 +29,8 @@
 #include <filesystem>
 #include <thread>
 #include <chrono>
-
+#include <cstdlib>
+#include <string>
 
 #include <QtWidgets/QApplication>
 #include <QtWidgets/QMainWindow>
@@ -45,7 +46,7 @@
 // ROS2
 #include "rclcpp/rclcpp.hpp"
 #include "std_msgs/msg/string.hpp"
-#include "ros2foxy/msg/imu.hpp"
+#include "displayrt_example_ros2foxy/msg/imu.hpp"
 
 
 using namespace display_rt; // for DisplayRT
@@ -82,7 +83,7 @@ class MinimalPublisher2 : public rclcpp::Node
     MinimalPublisher2()
     : Node("minimal_publisher_2"), count_(0)
     {
-      publisher_ = this->create_publisher<ros2foxy::msg::IMU>("imu", 10);
+      publisher_ = this->create_publisher<displayrt_example_ros2foxy::msg::IMU>("imu", 10);
       timer_ = this->create_wall_timer(
       500ms, std::bind(&MinimalPublisher2::timer_callback, this));
     }
@@ -90,7 +91,7 @@ class MinimalPublisher2 : public rclcpp::Node
   private:
     void timer_callback()
     {
-      auto message = ros2foxy::msg::IMU();
+      auto message = displayrt_example_ros2foxy::msg::IMU();
       message.timestamp = count_;
       message.id = 1;
       message.parent_id = 0;
@@ -106,9 +107,11 @@ class MinimalPublisher2 : public rclcpp::Node
       message.acceleration[2] = 2.0;
       RCLCPP_INFO(this->get_logger(), "Publishing: '%d'", message.timestamp);
       publisher_->publish(message);
+      count_++;
     }
+
     rclcpp::TimerBase::SharedPtr timer_;
-    rclcpp::Publisher<ros2foxy::msg::IMU>::SharedPtr publisher_;
+    rclcpp::Publisher<displayrt_example_ros2foxy::msg::IMU>::SharedPtr publisher_;
     size_t count_;
 };
 
@@ -137,12 +140,12 @@ class MinimalSubscriber2 : public rclcpp::Node
     MinimalSubscriber2()
     : Node("minimal_subscriber_2")
     {
-      subscription_ = this->create_subscription<ros2foxy::msg::IMU>(
+      subscription_ = this->create_subscription<displayrt_example_ros2foxy::msg::IMU>(
       "imu", 10, std::bind(&MinimalSubscriber2::topic_callback, this, _1));
     }
 
   private:
-    void topic_callback(const ros2foxy::msg::IMU::SharedPtr msg) const
+    void topic_callback(const displayrt_example_ros2foxy::msg::IMU::SharedPtr msg) const
     {
       RCLCPP_INFO(
         this->get_logger(), 
@@ -156,7 +159,7 @@ class MinimalSubscriber2 : public rclcpp::Node
         msg->acceleration[0], msg->acceleration[1], msg->acceleration[2]
       );
     }
-    rclcpp::Subscription<ros2foxy::msg::IMU>::SharedPtr subscription_;
+    rclcpp::Subscription<displayrt_example_ros2foxy::msg::IMU>::SharedPtr subscription_;
 };
 
 int main(int argc, char *argv[])
@@ -164,6 +167,31 @@ int main(int argc, char *argv[])
     // rclcpp::init(argc, argv);
     // rclcpp::spin(std::make_shared<MinimalPublisher>());
     // rclcpp::shutdown();
+
+    { // set LD_LIBRARY_PATH to include /build directory
+      // Get the current value of LD_LIBRARY_PATH
+      const char* current_ld_library_path = getenv("LD_LIBRARY_PATH");
+
+      // Define the new path to append
+      const char* new_library_path = "/home/arcslab/cmake_ws/DisplayRT/example/displayrt_example_ros2foxy/build";
+
+      // Create the updated LD_LIBRARY_PATH
+      std::string updated_ld_library_path;
+      if (current_ld_library_path)
+      {
+          // Append the new path to the existing LD_LIBRARY_PATH
+          updated_ld_library_path = std::string(current_ld_library_path) + ":" + new_library_path;
+      }
+      else
+      {
+          // If LD_LIBRARY_PATH is not set, just use the new path
+          updated_ld_library_path = new_library_path;
+      }
+
+      // Set the updated LD_LIBRARY_PATH
+      setenv("LD_LIBRARY_PATH", updated_ld_library_path.c_str(), 1); // 1 means overwrite if it already exists
+    }
+
 
     rclcpp::init(argc, argv);
 
