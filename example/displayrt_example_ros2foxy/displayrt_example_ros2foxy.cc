@@ -118,6 +118,7 @@ int main(int argc, char *argv[])
 
       // combine the new_library_path with the current working directory
       new_library_path = (cwd / new_library_path).string();
+      std::cout << "new_library_path: " << new_library_path << std::endl;
 
       // combine the new_config_path with the current working directory
       new_config_path = (cwd / new_config_path).string();
