@@ -39,7 +39,10 @@ find_package(rosidl_typesupport_introspection_cpp REQUIRED)
 
 # Add custom message files
 set(msg_files
-    types/IMU.msg
+    types/IMU.msg 
+    types/RevoluteServo.msg
+    types/Sensors.msg 
+    types/Servos.msg
 )
 
 # Generate ROS 2 interfaces
@@ -62,16 +65,12 @@ find_package(DisplayRT REQUIRED)
 
 # Add the executable
 set( ROS2FOXY_EXAMPLE_SOURCE 
-    # myDisplayWithLCM.cc 
+    myDisplayWithROS2Foxy.cc
 )
 
 set( ROS2FOXY_EXAMPLE_HEADER 
-    # ../displayRT_parser.h 
-    # myDisplayWithLCM.h 
-    # msg/imu_sensor_t.hpp 
-    # msg/revolute_servo_t.hpp 
-    # msg/sensors_t.hpp 
-    # msg/servos_t.hpp 
+    displayRT_parser.h 
+    myDisplayWithROS2Foxy.h
 )
 
 set( MINIYAML_HEADER 

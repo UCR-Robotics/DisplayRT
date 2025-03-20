@@ -79,6 +79,7 @@
         "cfenv": "cpp",
         "typeindex": "cpp",
         "valarray": "cpp",
-        "*.txx": "cpp"
+        "*.txx": "cpp",
+        "shared_mutex": "cpp"
     }
 }

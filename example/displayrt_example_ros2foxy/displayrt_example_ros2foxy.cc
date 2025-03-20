@@ -41,130 +41,26 @@
 #include "displayRT.h"
 #include "displayRT_parser.h"
 
-// #include "myDisplayWithLCM.h"
+#include "myDisplayWithROS2Foxy.h"
 
 // ROS2
 #include "rclcpp/rclcpp.hpp"
 #include "std_msgs/msg/string.hpp"
 #include "displayrt_example_ros2foxy/msg/imu.hpp"
+#include "displayrt_example_ros2foxy/msg/sensors.hpp"
+#include "displayrt_example_ros2foxy/msg/revolute_servo.hpp"
+#include "displayrt_example_ros2foxy/msg/servos.hpp"
 
 
 using namespace display_rt; // for DisplayRT
 using namespace std::chrono_literals;
 using std::placeholders::_1;
 
-class MinimalPublisher : public rclcpp::Node
-{
-  public:
-    MinimalPublisher()
-    : Node("minimal_publisher"), count_(0)
-    {
-      publisher_ = this->create_publisher<std_msgs::msg::String>("topic", 10);
-      timer_ = this->create_wall_timer(
-      500ms, std::bind(&MinimalPublisher::timer_callback, this));
-    }
-
-  private:
-    void timer_callback()
-    {
-      auto message = std_msgs::msg::String();
-      message.data = "Hello, world! " + std::to_string(count_++);
-      RCLCPP_INFO(this->get_logger(), "Publishing: '%s'", message.data.c_str());
-      publisher_->publish(message);
-    }
-    rclcpp::TimerBase::SharedPtr timer_;
-    rclcpp::Publisher<std_msgs::msg::String>::SharedPtr publisher_;
-    size_t count_;
-};
-
-class MinimalPublisher2 : public rclcpp::Node
-{
-  public:
-    MinimalPublisher2()
-    : Node("minimal_publisher_2"), count_(0)
-    {
-      publisher_ = this->create_publisher<displayrt_example_ros2foxy::msg::IMU>("imu", 10);
-      timer_ = this->create_wall_timer(
-      500ms, std::bind(&MinimalPublisher2::timer_callback, this));
-    }
-
-  private:
-    void timer_callback()
-    {
-      auto message = displayrt_example_ros2foxy::msg::IMU();
-      message.timestamp = count_;
-      message.id = 1;
-      message.parent_id = 0;
-      message.quaternion[0] = 0.0;
-      message.quaternion[1] = 0.0;
-      message.quaternion[2] = 0.0;
-      message.quaternion[3] = 1.0;
-      message.euler_rate[0] = 1.0;
-      message.euler_rate[1] = 1.0;
-      message.euler_rate[2] = 1.0;
-      message.acceleration[0] = 2.0;
-      message.acceleration[1] = 2.0;
-      message.acceleration[2] = 2.0;
-      RCLCPP_INFO(this->get_logger(), "Publishing: '%d'", message.timestamp);
-      publisher_->publish(message);
-      count_++;
-    }
-
-    rclcpp::TimerBase::SharedPtr timer_;
-    rclcpp::Publisher<displayrt_example_ros2foxy::msg::IMU>::SharedPtr publisher_;
-    size_t count_;
-};
-
-// from ROS2 foxy
-class MinimalSubscriber : public rclcpp::Node
-{
-  public:
-    MinimalSubscriber()
-    : Node("minimal_subscriber")
-    {
-      subscription_ = this->create_subscription<std_msgs::msg::String>(
-      "topic", 10, std::bind(&MinimalSubscriber::topic_callback, this, _1));
-    }
-
-  private:
-    void topic_callback(const std_msgs::msg::String::SharedPtr msg) const
-    {
-      RCLCPP_INFO(this->get_logger(), "I heard: '%s'", msg->data.c_str());
-    }
-    rclcpp::Subscription<std_msgs::msg::String>::SharedPtr subscription_;
-};
-
-class MinimalSubscriber2 : public rclcpp::Node
-{
-  public:
-    MinimalSubscriber2()
-    : Node("minimal_subscriber_2")
-    {
-      subscription_ = this->create_subscription<displayrt_example_ros2foxy::msg::IMU>(
-      "imu", 10, std::bind(&MinimalSubscriber2::topic_callback, this, _1));
-    }
-
-  private:
-    void topic_callback(const displayrt_example_ros2foxy::msg::IMU::SharedPtr msg) const
-    {
-      RCLCPP_INFO(
-        this->get_logger(), 
-        "I heard: timestamp = %d, IMU ID = %d, Parent ID = %d\n"
-        "Quaternion = [%f, %f, %f, %f]\n"
-        "Euler Rate = [%f, %f, %f]\n"
-        "Acceleration = [%f, %f, %f]", 
-        msg->timestamp, msg->id, msg->parent_id, 
-        msg->quaternion[0], msg->quaternion[1], msg->quaternion[2], msg->quaternion[3],
-        msg->euler_rate[0], msg->euler_rate[1], msg->euler_rate[2],
-        msg->acceleration[0], msg->acceleration[1], msg->acceleration[2]
-      );
-    }
-    rclcpp::Subscription<displayrt_example_ros2foxy::msg::IMU>::SharedPtr subscription_;
-};
-
 int main(int argc, char *argv[])
 {
-    { // set LD_LIBRARY_PATH to include /build directory
+  std::string new_config_path;
+
+    { // set LD_LIBRARY_PATH to include /build directory, get config file path
       // Get the current value of LD_LIBRARY_PATH
       const char* current_ld_library_path = getenv("LD_LIBRARY_PATH");
 
@@ -172,9 +68,10 @@ int main(int argc, char *argv[])
       // current working directory
       std::filesystem::path cwd = std::filesystem::current_path();
 
-      // check command line argument -path-to-build
+      // check command line arguments -path-to-build and -path-to-config
       std::string new_library_path;
-      if (argc > 1)
+      // std::string new_config_path;
+      if (argc > 3)
       {
         // loop through command line arguments
         for (int i = 1; i < argc; i++)
@@ -187,7 +84,17 @@ int main(int argc, char *argv[])
             {
               // set the new_library_path to the next argument
               new_library_path = std::string(argv[i + 1]);
-              break;
+              continue;
+            }
+          }
+          else if (std::string(argv[i]) == "-path-to-config")
+          {
+            // check if the next argument is the path
+            if (i + 1 < argc)
+            {
+              // set the new_library_path to the next argument
+              new_config_path = std::string(argv[i + 1]);
+              continue;
             }
           }
         }
@@ -197,26 +104,35 @@ int main(int argc, char *argv[])
         {
           throw std::runtime_error("Please provide the relative path to the build directory using the command line argument '-path-to-build <path>'");
         }
+
+        // check if the new_config_path is set
+        if (new_config_path.empty())
+        {
+          throw std::runtime_error("Please provide the relative path to the config file using the command line argument '-path-to-config <path>'");
+        }
       }
       else
       {
-        throw std::runtime_error("Please provide the relative path to the build directory using the command line argument '-path-to-build <path>'");
+        throw std::runtime_error("Please provide the relative path to the build directory using the command line arguments '-path-to-build <path>' and '-path-to-config <path>'");
       }
 
       // combine the new_library_path with the current working directory
       new_library_path = (cwd / new_library_path).string();
 
+      // combine the new_config_path with the current working directory
+      new_config_path = (cwd / new_config_path).string();
+
       // Create the updated LD_LIBRARY_PATH
       std::string updated_ld_library_path;
       if (current_ld_library_path)
       {
-          // Append the new path to the existing LD_LIBRARY_PATH
-          updated_ld_library_path = std::string(current_ld_library_path) + ":" + new_library_path;
+        // Append the new path to the existing LD_LIBRARY_PATH
+        updated_ld_library_path = std::string(current_ld_library_path) + ":" + new_library_path;
       }
       else
       {
-          // If LD_LIBRARY_PATH is not set, just use the new path
-          updated_ld_library_path = new_library_path;
+        // If LD_LIBRARY_PATH is not set, just use the new path
+        updated_ld_library_path = new_library_path;
       }
 
       // Set the updated LD_LIBRARY_PATH
@@ -226,45 +142,74 @@ int main(int argc, char *argv[])
 
     rclcpp::init(argc, argv);
 
-    // // ROS2 publisher thread
-    // std::thread t0(
-    //     [&]{
-    //         // rclcpp::init(argc, argv);
-    //         rclcpp::spin(std::make_shared<MinimalPublisher>());
-    //         // rclcpp::shutdown();
-    //     }
-    // );
-
-    // // ROS2 subscriber thread
-    // std::thread t1(
-    //     [&]{
-    //         // rclcpp::init(argc, argv);
-    //         rclcpp::spin(std::make_shared<MinimalSubscriber>());
-    //         // rclcpp::shutdown();
-    //     }
-    // );
-
-    // ROS2 publisher thread
-    std::thread t2(
+    // myPublisherROS2Foxy thread
+    std::thread t1(
         [&]{
-            // rclcpp::init(argc, argv);
-            rclcpp::spin(std::make_shared<MinimalPublisher2>());
-            // rclcpp::shutdown();
+            std::shared_ptr<display_rt::example::myPublisherROS2Foxy> publisher = std::make_shared<display_rt::example::myPublisherROS2Foxy>();
+
+            // spin for ROS2 publisher
+            while( rclcpp::ok() )
+            {
+                try
+                {
+                    publisher->runOnce();
+                }
+                catch (const std::exception &e)
+                {
+                    std::cerr << "Exception: " << e.what() << std::endl;
+                }
+
+                // sleep for 10 ms
+                std::this_thread::sleep_for(std::chrono::milliseconds(100));
+            }
         }
     );
 
-    // ROS2 subscriber thread
+    // // mySubscriberROS2Foxy thread
+    // std::thread t2(
+    //     [&]{
+    //         std::shared_ptr<display_rt::example::mySubscriberROS2Foxy> subscriber = std::make_shared<display_rt::example::mySubscriberROS2Foxy>();
+
+    //         // spin for ROS2 subscriber
+    //         while( rclcpp::ok() )
+    //         {
+    //             try
+    //             {
+    //                 subscriber->spinOnce();
+    //             }
+    //             catch (const std::exception &e)
+    //             {
+    //                 std::cerr << "Exception: " << e.what() << std::endl;
+    //             }
+
+    //             std::this_thread::sleep_for(std::chrono::milliseconds(50));
+    //         }
+    //     }
+    // );
+
+    // myDisplayRT thread
+    // parser
+    // std::string path = std::filesystem::current_path().string() + "/../example/MultiwindowPlotWithParsedDisplayRT/config.yaml";
+    // std::string path = std::filesystem::current_path().string() + "/config.yaml";
+    // print out the path
+    std::cout << "\nconfig file path: " << new_config_path << std::endl;
+
+    Yaml::Node parser;
+    std::shared_ptr<DisplayRT_Parser> display_parser = std::make_shared<DisplayRT_Parser>();
+    auto display_property = display_parser->parseConfiguration( new_config_path, parser );
+
     std::thread t3(
         [&]{
-            // rclcpp::init(argc, argv);
-            rclcpp::spin(std::make_shared<MinimalSubscriber2>());
-            // rclcpp::shutdown();
+            // display
+            auto display = std::make_shared<display_rt::example::myDisplayRT_ROS2Foxy>( display_property );
+            display->Initial( argc, argv); 
+            display->Setup();
+            display->Start(); 
         }
     );
 
-    // t0.join();
-    // t1.join();
-    t2.join();
+    t1.join();
+    // t2.join();
     t3.join();
 
     rclcpp::shutdown();

@@ -13,9 +13,9 @@
 #include "displayRT.h"
 #include "displayRT_parser.h"
 
-#include <lcm/lcm-cpp.hpp>
-#include "msg/servos_t.hpp"
-#include "msg/sensors_t.hpp"
+// #include <lcm/lcm-cpp.hpp>
+// #include "msg/servos_t.hpp"
+// #include "msg/sensors_t.hpp"
 
 #include "myDisplayWithROS2Foxy.h"
 
@@ -28,180 +28,231 @@ namespace display_rt::example {
 /* LCM Message */
 /***************/
 
-std::shared_ptr< msg::servos_t > Servos_Message::generate( const int64_t timer )
-{
-    // servos
-    auto data = std::make_shared<msg::servos_t>();
-    data->timestamp = timer;
-    data->revolute_servo_count = this->revolute_servo_count; 
-    data->revolute_servos.resize(data->revolute_servo_count);
+// std::shared_ptr< msg::servos_t > Servos_Message::generate( const int64_t timer )
+// {
+//     // servos
+//     auto data = std::make_shared<msg::servos_t>();
+//     data->timestamp = timer;
+//     data->revolute_servo_count = this->revolute_servo_count; 
+//     data->revolute_servos.resize(data->revolute_servo_count);
     
-    // lambda: generate sinonoidal signal based on time
-    auto generate_sin = [](const int64_t timer, const float amplitude, const float frequency, const float phase) -> float
-    {
-        float timer_s = static_cast<float>(timer) / 1000.0f;
-        return amplitude * std::sin(2.0f * M_PI * frequency * timer + phase);
-    };
+//     // lambda: generate sinonoidal signal based on time
+//     auto generate_sin = [](const int64_t timer, const float amplitude, const float frequency, const float phase) -> float
+//     {
+//         float timer_s = static_cast<float>(timer) / 1000.0f;
+//         return amplitude * std::sin(2.0f * M_PI * frequency * timer + phase);
+//     };
 
-    // lambda: generate time derivative of sinonoidal signal based on time
-    auto generate_sin_dot = [](const int64_t timer, const float amplitude, const float frequency, const float phase) -> float
-    {
-        float timer_s = timer / 1000.0f;
-        return amplitude * 2.0f * M_PI * frequency * std::cos(2.0f * M_PI * frequency * timer + phase);
-    };
+//     // lambda: generate time derivative of sinonoidal signal based on time
+//     auto generate_sin_dot = [](const int64_t timer, const float amplitude, const float frequency, const float phase) -> float
+//     {
+//         float timer_s = timer / 1000.0f;
+//         return amplitude * 2.0f * M_PI * frequency * std::cos(2.0f * M_PI * frequency * timer + phase);
+//     };
 
-    // lambda: generate white noise signal 
-    auto generate_white_noise = [](const float amplitude) -> float
-    {
-        return amplitude * (2.0f * static_cast<float>(rand()) / static_cast<float>(RAND_MAX) - 1.0f);
-    };
+//     // lambda: generate white noise signal 
+//     auto generate_white_noise = [](const float amplitude) -> float
+//     {
+//         return amplitude * (2.0f * static_cast<float>(rand()) / static_cast<float>(RAND_MAX) - 1.0f);
+//     };
 
-    for(int i = 0; i < static_cast<int>( data->revolute_servo_count ); i++)
-    {
-        data->revolute_servos[i].id = i;
+//     for(int i = 0; i < static_cast<int>( data->revolute_servo_count ); i++)
+//     {
+//         data->revolute_servos[i].id = i;
 
-        data->revolute_servos[i].commanded_position = generate_sin(timer, 1.0, 0.1, static_cast<float>(i) * 0.5);
-        data->revolute_servos[i].commanded_velocity = generate_sin_dot(timer, 1.0, 0.1, static_cast<float>(i) * 0.5);
-        data->revolute_servos[i].commanded_torque = 0.5 * data->revolute_servos[i].commanded_position; 
+//         data->revolute_servos[i].commanded_position = generate_sin(timer, 1.0, 0.1, static_cast<float>(i) * 0.5);
+//         data->revolute_servos[i].commanded_velocity = generate_sin_dot(timer, 1.0, 0.1, static_cast<float>(i) * 0.5);
+//         data->revolute_servos[i].commanded_torque = 0.5 * data->revolute_servos[i].commanded_position; 
 
-        data->revolute_servos[i].estimated_position = data->revolute_servos[i].commanded_position + generate_white_noise(0.1);
-        data->revolute_servos[i].estimated_velocity = data->revolute_servos[i].commanded_velocity + generate_white_noise(0.1);
-        data->revolute_servos[i].estimated_torque = data->revolute_servos[i].commanded_torque + generate_white_noise(0.1);
-    }
+//         data->revolute_servos[i].estimated_position = data->revolute_servos[i].commanded_position + generate_white_noise(0.1);
+//         data->revolute_servos[i].estimated_velocity = data->revolute_servos[i].commanded_velocity + generate_white_noise(0.1);
+//         data->revolute_servos[i].estimated_torque = data->revolute_servos[i].commanded_torque + generate_white_noise(0.1);
+//     }
 
-    { // debug
-        std::stringstream ss;
-        ss << "Publishing Servos Message : \n" 
-        << "channel: " << channel << ","
-        << "timestamp: " << data->timestamp << std::endl;
+//     { // debug
+//         std::stringstream ss;
+//         ss << "Publishing Servos Message : \n" 
+//         << "channel: " << channel << ","
+//         << "timestamp: " << data->timestamp << std::endl;
         
-        for(int i = 0; i < static_cast<int>( data->revolute_servo_count); ++i)
-        {
-        ss << "revolute servo[" << i << "]: "
-            << "id: " << static_cast<int>( data->revolute_servos[i].id ) << ","
-            << "estimated position: " << data->revolute_servos[i].estimated_position << ","
-            << "velocity: " << data->revolute_servos[i].estimated_velocity << ","
-            << "torque: " << data->revolute_servos[i].estimated_torque << "; "
-            << "commanded position: " << data->revolute_servos[i].commanded_position << ","
-            << "velocity: " << data->revolute_servos[i].commanded_velocity << ","
-            << "torque: " << data->revolute_servos[i].commanded_torque 
-            << std::endl;
-        }
+//         for(int i = 0; i < static_cast<int>( data->revolute_servo_count); ++i)
+//         {
+//         ss << "revolute servo[" << i << "]: "
+//             << "id: " << static_cast<int>( data->revolute_servos[i].id ) << ","
+//             << "estimated position: " << data->revolute_servos[i].estimated_position << ","
+//             << "velocity: " << data->revolute_servos[i].estimated_velocity << ","
+//             << "torque: " << data->revolute_servos[i].estimated_torque << "; "
+//             << "commanded position: " << data->revolute_servos[i].commanded_position << ","
+//             << "velocity: " << data->revolute_servos[i].commanded_velocity << ","
+//             << "torque: " << data->revolute_servos[i].commanded_torque 
+//             << std::endl;
+//         }
         
-        std::cout << ss.str() << std::endl;
-    }
+//         std::cout << ss.str() << std::endl;
+//     }
 
-    return data;
-}
+//     return data;
+// }
 
-std::shared_ptr< msg::sensors_t > Sensors_Message::generate( const int64_t timer )
-{
-    // sensors
-    auto data = std::make_shared<msg::sensors_t>();
-    data->timestamp = timer;
-    data->imu_sensor_count = this->imu_sensor_count; 
-    data->imu_sensors.resize(data->imu_sensor_count);
+// std::shared_ptr< msg::sensors_t > Sensors_Message::generate( const int64_t timer )
+// {
+//     // sensors
+//     auto data = std::make_shared<msg::sensors_t>();
+//     data->timestamp = timer;
+//     data->imu_sensor_count = this->imu_sensor_count; 
+//     data->imu_sensors.resize(data->imu_sensor_count);
     
-    // lambda: generate sinonoidal signal based on time
-    auto generate_sin = [](const int64_t timer, const float amplitude, const float frequency, const float phase) -> float
-    {
-        float timer_s = static_cast<float>(timer) / 1000.0f;
-        return amplitude * std::sin(2.0f * M_PI * frequency * timer_s + phase);
-    };
+//     // lambda: generate sinonoidal signal based on time
+//     auto generate_sin = [](const int64_t timer, const float amplitude, const float frequency, const float phase) -> float
+//     {
+//         float timer_s = static_cast<float>(timer) / 1000.0f;
+//         return amplitude * std::sin(2.0f * M_PI * frequency * timer_s + phase);
+//     };
 
-    // lambda: generate time derivative of sinonoidal signal based on time
-    auto generate_sin_dot = [](const int64_t timer, const float amplitude, const float frequency, const float phase) -> float
-    {
-        float timer_s = static_cast<float>( timer ) / 1000.0f;
-        return amplitude * 2.0f * M_PI * frequency * std::cos(2.0f * M_PI * frequency * timer_s + phase);
-    };
+//     // lambda: generate time derivative of sinonoidal signal based on time
+//     auto generate_sin_dot = [](const int64_t timer, const float amplitude, const float frequency, const float phase) -> float
+//     {
+//         float timer_s = static_cast<float>( timer ) / 1000.0f;
+//         return amplitude * 2.0f * M_PI * frequency * std::cos(2.0f * M_PI * frequency * timer_s + phase);
+//     };
 
-    // lambda: generate white noise signal 
-    auto generate_white_noise = [](const float amplitude) -> float
-    {
-        return amplitude * (2.0f * static_cast<float>(rand()) / static_cast<float>(RAND_MAX) - 1.0f);
-    };  
+//     // lambda: generate white noise signal 
+//     auto generate_white_noise = [](const float amplitude) -> float
+//     {
+//         return amplitude * (2.0f * static_cast<float>(rand()) / static_cast<float>(RAND_MAX) - 1.0f);
+//     };  
 
-    for(int i = 0; i < static_cast<int>( data->imu_sensor_count ); i++)
-    {
-        data->imu_sensors[i].id = i;
-        data->imu_sensors[i].quaternion[0] = 1.0;
-        data->imu_sensors[i].quaternion[1] = 0.0;
-        data->imu_sensors[i].quaternion[2] = 0.0;
-        data->imu_sensors[i].quaternion[3] = 0.0;
-        data->imu_sensors[i].euler_rate[0] = generate_sin(timer, 2.0, 0.5, static_cast<float>(i) * 0.5 + 0.0) + generate_white_noise(0.5);
-        data->imu_sensors[i].euler_rate[1] = generate_sin(timer, 2.0, 0.5, static_cast<float>(i) * 0.5 + 0.1) + generate_white_noise(0.5);
-        data->imu_sensors[i].euler_rate[2] = generate_sin(timer, 2.0, 0.5, static_cast<float>(i) * 0.5 + 0.2) + generate_white_noise(0.5);
-        data->imu_sensors[i].acceleration[0] = generate_sin(timer, 4.0, 1, static_cast<float>(i) * 0.5 + 0.0) + generate_white_noise(1);
-        data->imu_sensors[i].acceleration[1] = generate_sin(timer, 4.0, 1, static_cast<float>(i) * 0.5 + 0.1) + generate_white_noise(1);
-        data->imu_sensors[i].acceleration[2] = generate_sin(timer, 4.0, 1, static_cast<float>(i) * 0.5 + 0.2) + generate_white_noise(1);
-    }
+//     for(int i = 0; i < static_cast<int>( data->imu_sensor_count ); i++)
+//     {
+//         data->imu_sensors[i].id = i;
+//         data->imu_sensors[i].quaternion[0] = 1.0;
+//         data->imu_sensors[i].quaternion[1] = 0.0;
+//         data->imu_sensors[i].quaternion[2] = 0.0;
+//         data->imu_sensors[i].quaternion[3] = 0.0;
+//         data->imu_sensors[i].euler_rate[0] = generate_sin(timer, 2.0, 0.5, static_cast<float>(i) * 0.5 + 0.0) + generate_white_noise(0.5);
+//         data->imu_sensors[i].euler_rate[1] = generate_sin(timer, 2.0, 0.5, static_cast<float>(i) * 0.5 + 0.1) + generate_white_noise(0.5);
+//         data->imu_sensors[i].euler_rate[2] = generate_sin(timer, 2.0, 0.5, static_cast<float>(i) * 0.5 + 0.2) + generate_white_noise(0.5);
+//         data->imu_sensors[i].acceleration[0] = generate_sin(timer, 4.0, 1, static_cast<float>(i) * 0.5 + 0.0) + generate_white_noise(1);
+//         data->imu_sensors[i].acceleration[1] = generate_sin(timer, 4.0, 1, static_cast<float>(i) * 0.5 + 0.1) + generate_white_noise(1);
+//         data->imu_sensors[i].acceleration[2] = generate_sin(timer, 4.0, 1, static_cast<float>(i) * 0.5 + 0.2) + generate_white_noise(1);
+//     }
 
-    { // debug
-        std::stringstream ss;
-        ss << "Publishing Sensors Message : \n" 
-                << "channel: " << channel << ","
-                << "timestamp: " << data->timestamp << std::endl;
+//     { // debug
+//         std::stringstream ss;
+//         ss << "Publishing Sensors Message : \n" 
+//                 << "channel: " << channel << ","
+//                 << "timestamp: " << data->timestamp << std::endl;
         
-        for(int i = 0; i < static_cast<int>( data->imu_sensor_count ); ++i)
-        {
-            ss << "imu sensor[" << i << "]: "
-                << "id: " << static_cast<int>( data->imu_sensors[i].id ) << ","
-                << "quaternion: " << data->imu_sensors[i].quaternion[0] << ", " << data->imu_sensors[i].quaternion[1] << ", " << data->imu_sensors[i].quaternion[2] << ", " << data->imu_sensors[i].quaternion[3] << ";"
-                << "euler rate: " << data->imu_sensors[i].euler_rate[0] << ", " << data->imu_sensors[i].euler_rate[1] << ", " << data->imu_sensors[i].euler_rate[2] << ";"
-                << "acceleration: " << data->imu_sensors[i].acceleration[0] << ", " << data->imu_sensors[i].acceleration[1] << ", " << data->imu_sensors[i].acceleration[2] 
-                << std::endl;
-        }
+//         for(int i = 0; i < static_cast<int>( data->imu_sensor_count ); ++i)
+//         {
+//             ss << "imu sensor[" << i << "]: "
+//                 << "id: " << static_cast<int>( data->imu_sensors[i].id ) << ","
+//                 << "quaternion: " << data->imu_sensors[i].quaternion[0] << ", " << data->imu_sensors[i].quaternion[1] << ", " << data->imu_sensors[i].quaternion[2] << ", " << data->imu_sensors[i].quaternion[3] << ";"
+//                 << "euler rate: " << data->imu_sensors[i].euler_rate[0] << ", " << data->imu_sensors[i].euler_rate[1] << ", " << data->imu_sensors[i].euler_rate[2] << ";"
+//                 << "acceleration: " << data->imu_sensors[i].acceleration[0] << ", " << data->imu_sensors[i].acceleration[1] << ", " << data->imu_sensors[i].acceleration[2] 
+//                 << std::endl;
+//         }
         
-        std::cout << ss.str() << std::endl;
-    }
+//         std::cout << ss.str() << std::endl;
+//     }
 
-    return data;
-}
+//     return data;
+// }
 
-myPublisherLCM::myPublisherLCM()
+myPublisherROS2Foxy::myPublisherROS2Foxy()
+: Node("myPublisherROS2Foxy")
 {
-    this->lcm_ = std::make_shared<lcm::LCM>("udpm://239.255.76.67:7667?ttl=2");
-    if (!this->lcm_->good())
-    {
-        throw std::runtime_error("[WARNING] myPublisherLCM: LCM is not good");
-    }
-    else
-    {
-        std::cout << "[INFO] myPublisherLCM: LCM is good" << std::endl;
-    }
-
-    this->servos_message_ = std::make_shared<Servos_Message>( this->channel_servos_, this->count_revolute_servo_ );
-    this->sensors_message_ = std::make_shared<Sensors_Message>(  this->channel_sensors_, this->count_imu_sensor_ );
+    this->publisher_sensors_ = this->create_publisher<displayrt_example_ros2foxy::msg::Sensors>(this->channel_sensors_, 10);
+    this->publisher_servos_ = this->create_publisher<displayrt_example_ros2foxy::msg::Servos>(this->channel_servos_, 10);
 
     // Capture the start time
     start_time_ = std::chrono::steady_clock::now();
 }
 
-mySubscriberLCM::mySubscriberLCM()
+void myPublisherROS2Foxy::publishServos()
 {
-    this->lcm_ = std::make_shared<lcm::LCM>("udpm://239.255.76.67:7667?ttl=2");
-    if (!lcm_->good())
+    const auto timestamp = this->getElapsedTimeInMilliseconds();
+
+    auto message = displayrt_example_ros2foxy::msg::Servos();
+    message.timestamp = timestamp;
+    message.revolute_servo_count = this->count_revolute_servo_;
+
+    // loop through the revolute servos
+    for (size_t i = 0; i < message.revolute_servo_count; i++)
     {
-        throw std::runtime_error("[WARNING] mySubscriberLCM: LCM is not good");
-    }
-    else
-    {
-        std::cout << "[INFO] mySubscriberLCM: LCM is good" << std::endl;
+        auto servo_message = displayrt_example_ros2foxy::msg::RevoluteServo();
+        servo_message.timestamp = timestamp; 
+        servo_message.id = i;
+        servo_message.parent_id = 0;
+        servo_message.enabled = true;
+
+        servo_message.commanded_position = generateSin(timestamp, 1.0, 0.1, static_cast<float>(i) * 0.5);
+        servo_message.commanded_velocity = generateSinDot(timestamp, 1.0, 0.1, static_cast<float>(i) * 0.5);
+        servo_message.commanded_torque = 0.5 * servo_message.commanded_position; 
+
+        servo_message.estimated_position = servo_message.commanded_position + generateWhiteNoise(0.1);
+        servo_message.estimated_velocity = servo_message.commanded_velocity + generateWhiteNoise(0.1);
+        servo_message.estimated_torque = servo_message.commanded_torque + generateWhiteNoise(0.1);
+
+        message.revolute_servos.push_back(servo_message);
     }
 
-    lcm_->subscribe( this->channel_servos_, &mySubscriberLCM::servosCallbackHandler, this);
-    lcm_->subscribe( this->channel_sensors_, &mySubscriberLCM::sensorsCallbackHandler, this);
+    RCLCPP_INFO(this->get_logger(), "Publishing: '%d'", message.timestamp);
+    this->publisher_servos_->publish(message);
 }
 
-void mySubscriberLCM::servosCallbackHandler(const lcm::ReceiveBuffer* rbuf, const std::string& channel, const msg::servos_t* msg)
+void myPublisherROS2Foxy::publishSensors()
 {
-    this->servos_data_ = std::make_shared<msg::servos_t>(*msg);
+    const auto timestamp = this->getElapsedTimeInMilliseconds();
+
+    auto message = displayrt_example_ros2foxy::msg::Sensors();
+    message.timestamp = timestamp;
+    message.imu_sensor_count = this->count_imu_sensor_;
+
+    // loop through the imu sensors
+    for (size_t i = 0; i < message.imu_sensor_count; i++)
+    {
+        auto imu_message = displayrt_example_ros2foxy::msg::IMU();
+        imu_message.timestamp = timestamp;
+        imu_message.id = i;
+        imu_message.parent_id = 0;
+        imu_message.quaternion[0] = 1.0;
+        imu_message.quaternion[1] = 0.0;
+        imu_message.quaternion[2] = 0.0;
+        imu_message.quaternion[3] = 0.0;
+        imu_message.euler_rate[0] = generateSin(timestamp, 2.0, 0.5, static_cast<float>(i) * 0.5 + 0.0) + generateWhiteNoise(0.5);
+        imu_message.euler_rate[1] = generateSin(timestamp, 2.0, 0.5, static_cast<float>(i) * 0.5 + 0.1) + generateWhiteNoise(0.5);
+        imu_message.euler_rate[2] = generateSin(timestamp, 2.0, 0.5, static_cast<float>(i) * 0.5 + 0.2) + generateWhiteNoise(0.5);
+        imu_message.acceleration[0] = generateSin(timestamp, 4.0, 1, static_cast<float>(i) * 0.5 + 0.0) + generateWhiteNoise(1);
+        imu_message.acceleration[1] = generateSin(timestamp, 4.0, 1, static_cast<float>(i) * 0.5 + 0.1) + generateWhiteNoise(1);
+        imu_message.acceleration[2] = generateSin(timestamp, 4.0, 1, static_cast<float>(i) * 0.5 + 0.2) + generateWhiteNoise(1);
+
+        message.imu_sensors.push_back(imu_message);
+    }
+
+    RCLCPP_INFO(this->get_logger(), "Publishing: '%d'", message.timestamp);
+    this->publisher_sensors_->publish(message);
+}
+
+mySubscriberROS2Foxy::mySubscriberROS2Foxy()
+: Node("mySubscriberROS2Foxy")
+{
+    this->subscription_servos_ = this->create_subscription<displayrt_example_ros2foxy::msg::Servos>(
+        this->channel_servos_, 10, std::bind(&mySubscriberROS2Foxy::servosCallbackHandler, this, std::placeholders::_1)
+    );
+    this->subscription_sensors_ = this->create_subscription<displayrt_example_ros2foxy::msg::Sensors>(
+        this->channel_sensors_, 10, std::bind(&mySubscriberROS2Foxy::sensorsCallbackHandler, this, std::placeholders::_1)
+    );
+}
+
+void mySubscriberROS2Foxy::servosCallbackHandler(const displayrt_example_ros2foxy::msg::Servos::SharedPtr msg)
+{
+    this->servos_data_ = std::make_shared<displayrt_example_ros2foxy::msg::Servos>(*msg);
     
     { // debug
         std::stringstream ss;
         ss << "Receiving Servos Message : \n" 
-            << "channel: " << channel << ","
+            << "channel: " << this->channel_servos_ << ","
             << "timestamp: " << this->servos_data_->timestamp << std::endl;
         
         for(int i = 0; i < static_cast<int>( this->servos_data_->revolute_servo_count ); ++i)
@@ -221,14 +272,14 @@ void mySubscriberLCM::servosCallbackHandler(const lcm::ReceiveBuffer* rbuf, cons
     }
 }
 
-void mySubscriberLCM::sensorsCallbackHandler(const lcm::ReceiveBuffer* rbuf, const std::string& channel, const msg::sensors_t* msg)
+void mySubscriberROS2Foxy::sensorsCallbackHandler(const displayrt_example_ros2foxy::msg::Sensors::SharedPtr msg)
 {
-    this->sensors_data_ = std::make_shared<msg::sensors_t>(*msg);
+    this->sensors_data_ = std::make_shared<displayrt_example_ros2foxy::msg::Sensors>(*msg);
     
     { // debug
         std::stringstream ss;
         ss << "Receiving Sensors Message : \n" 
-            << "channel: " << channel << ","
+            << "channel: " << this->channel_sensors_ << ","
             << "timestamp: " << this->sensors_data_->timestamp << std::endl;
         
         for(int i = 0; i < static_cast<int>( this->sensors_data_->imu_sensor_count ); ++i)
@@ -245,39 +296,41 @@ void mySubscriberLCM::sensorsCallbackHandler(const lcm::ReceiveBuffer* rbuf, con
     }
 }
 
-myDisplayRT::myDisplayRT( const std::shared_ptr<DisplayRT_Property> monitor_property )
-: DisplayRT(monitor_property)
+myDisplayRT_ROS2Foxy::myDisplayRT_ROS2Foxy( const std::shared_ptr<DisplayRT_Property> monitor_property )
+: DisplayRT(monitor_property), Node("myDisplayRT_ROS2Foxy")
 {
-    this->lcm_ = std::make_shared<lcm::LCM>("udpm://239.255.76.67:7667?ttl=2");
-    if (!lcm_->good())
-    {
-        throw std::runtime_error("[WARNING] mySubscriberLCM: LCM is not good");
-    }
-    else
-    {
-        std::cout << "[INFO] mySubscriberLCM: LCM is good" << std::endl;
-    }
+    this->subscription_servos_ = this->create_subscription<displayrt_example_ros2foxy::msg::Servos>(
+        this->channel_servos_, 10, std::bind(&myDisplayRT_ROS2Foxy::servosCallbackHandler, this, std::placeholders::_1)
+    );
+    this->subscription_sensors_ = this->create_subscription<displayrt_example_ros2foxy::msg::Sensors>(
+        this->channel_sensors_, 10, std::bind(&myDisplayRT_ROS2Foxy::sensorsCallbackHandler, this, std::placeholders::_1)
+    );
 
-    lcm_->subscribe( this->channel_servos_, &myDisplayRT::servosCallbackHandler, this);
-    lcm_->subscribe( this->channel_sensors_, &myDisplayRT::sensorsCallbackHandler, this);
+    this->servos_data_ = std::make_shared<displayrt_example_ros2foxy::msg::Servos>();
+    this->sensors_data_ = std::make_shared<displayrt_example_ros2foxy::msg::Sensors>();
 }
 
-DisplayRT::Status myDisplayRT::Setup()
+DisplayRT::Status myDisplayRT_ROS2Foxy::Setup()
 {
     // DisplayRT::defaultSetupDisplay();
 
-    // QObject::connect( this, &myDisplayRT::servosCallbackHandler, this, &myDisplayRT::Update );
+    // QObject::connect( this, &myDisplayRT_ROS2Foxy::servosCallbackHandler, this, &myDisplayRT_ROS2Foxy::Update );
 
     QTimer *dataTimer = new QTimer( this->_app.get() );
-    QObject::connect( dataTimer, &QTimer::timeout, this, &myDisplayRT::Update );
+    QObject::connect( dataTimer, &QTimer::timeout, this, &myDisplayRT_ROS2Foxy::Update );
     dataTimer->start(50); // Update every 100 ms
 
     return Status::NORMAL;
 }    
 
-DisplayRT::Status myDisplayRT::Update()
+DisplayRT::Status myDisplayRT_ROS2Foxy::Update()
 {
-    this->lcm_->handle();
+    if( rclcpp::ok() )
+    {
+        rclcpp::spin_some(this->shared_from_this());
+    }
+
+    // rclcpp::spin_some(this->shared_from_this());
 
     // DisplayRT::defaultUpdateDisplay();
 
@@ -286,20 +339,20 @@ DisplayRT::Status myDisplayRT::Update()
         { // integrity check
             // if ( this->servos_data_.get() == nullptr )
             // {
-            //     throw std::runtime_error("[WARNING] myDisplayRT: servos data is null");
+            //     throw std::runtime_error("[WARNING] myDisplayRT_ROS2Foxy: servos data is null");
             // }
             // compare channel name
             if ( this->_monitor_property->WindowProperties()[0]->Channel() != this->channel_servos_ )
             {
                 std::stringstream ss;
-                ss << "[WARNING] myDisplayRT: channel name mismatch, expected " << this->_monitor_property->WindowProperties()[0]->Channel() << " but got " << this->channel_servos_ << std::endl;
+                ss << "[WARNING] myDisplayRT_ROS2Foxy: channel name mismatch, expected " << this->_monitor_property->WindowProperties()[0]->Channel() << " but got " << this->channel_servos_ << std::endl;
                 throw std::runtime_error(ss.str());
             }
             // compare servo count
             if ( this->_monitor_property->WindowProperties()[0]->PlotCount() != this->servos_data_->revolute_servo_count )
             {
                 std::stringstream ss;
-                ss << "[WARNING] myDisplayRT: plot count mismatch, expected " << this->_monitor_property->WindowProperties()[0]->PlotCount() << " but got " << this->servos_data_->revolute_servo_count << std::endl;
+                ss << "[WARNING] myDisplayRT_ROS2Foxy: plot count mismatch, expected " << this->_monitor_property->WindowProperties()[0]->PlotCount() << " but got " << this->servos_data_->revolute_servo_count << std::endl;
                 throw std::runtime_error(ss.str());
             }
         }
@@ -315,7 +368,7 @@ DisplayRT::Status myDisplayRT::Update()
                     if ( plot->Axes().size() != 3 )
                     {
                         std::stringstream ss;
-                        ss << "[WARNING] myDisplayRT: plot " << plot->Id() << " has invalid axis count [" << plot->Axes().size() << "]\n";
+                        ss << "[WARNING] myDisplayRT_ROS2Foxy: plot " << plot->Id() << " has invalid axis count [" << plot->Axes().size() << "]\n";
                         throw std::runtime_error(ss.str());
                     }
                 }
@@ -327,7 +380,7 @@ DisplayRT::Status myDisplayRT::Update()
                         if ( axis->Axis()->graphs().size() != 2 )
                         {
                             std::stringstream ss;
-                            ss << "[WARNING] myDisplayRT: plot " << plot->Id() << " axis " << axis->Id() << " has invalid graph count [" << axis->Axis()->graphs().size() << "]\n";
+                            ss << "[WARNING] myDisplayRT_ROS2Foxy: plot " << plot->Id() << " axis " << axis->Id() << " has invalid graph count [" << axis->Axis()->graphs().size() << "]\n";
                             throw std::runtime_error(ss.str());
                         }
                     }
@@ -347,7 +400,7 @@ DisplayRT::Status myDisplayRT::Update()
                         if ( axis->Axis()->graphs().size() != 2 )
                         {
                             std::stringstream ss;
-                            ss << "[WARNING] myDisplayRT: plot " << plot->Id() << " axis " << axis->Id() << " has invalid graph count [" << axis->Axis()->graphs().size() << "]\n";
+                            ss << "[WARNING] myDisplayRT_ROS2Foxy: plot " << plot->Id() << " axis " << axis->Id() << " has invalid graph count [" << axis->Axis()->graphs().size() << "]\n";
                             throw std::runtime_error(ss.str());
                         }
                     }
@@ -367,7 +420,7 @@ DisplayRT::Status myDisplayRT::Update()
                         if ( axis->Axis()->graphs().size() != 2 )
                         {
                             std::stringstream ss;
-                            ss << "[WARNING] myDisplayRT: plot " << plot->Id() << " axis " << axis->Id() << " has invalid graph count [" << axis->Axis()->graphs().size() << "]\n";
+                            ss << "[WARNING] myDisplayRT_ROS2Foxy: plot " << plot->Id() << " axis " << axis->Id() << " has invalid graph count [" << axis->Axis()->graphs().size() << "]\n";
                             throw std::runtime_error(ss.str());
                         }
                     }
@@ -418,20 +471,20 @@ DisplayRT::Status myDisplayRT::Update()
         { // integrity check
             // if ( this->sensors_data_.get() == nullptr )
             // {
-            //     throw std::runtime_error("[WARNING] myDisplayRT: sensors data is null");
+            //     throw std::runtime_error("[WARNING] myDisplayRT_ROS2Foxy: sensors data is null");
             // }
             // compare channel name
             if ( this->_monitor_property->WindowProperties()[1]->Channel() != this->channel_sensors_ )
             {
                 std::stringstream ss;
-                ss << "[WARNING] myDisplayRT: channel name mismatch, expected " << this->_monitor_property->WindowProperties()[1]->Channel() << " but got " << this->channel_sensors_ << std::endl;
+                ss << "[WARNING] myDisplayRT_ROS2Foxy: channel name mismatch, expected " << this->_monitor_property->WindowProperties()[1]->Channel() << " but got " << this->channel_sensors_ << std::endl;
                 throw std::runtime_error(ss.str());
             }
             // compare sensor count
             if ( this->_monitor_property->WindowProperties()[1]->PlotCount() != this->sensors_data_->imu_sensor_count )
             {
                 std::stringstream ss;
-                ss << "[WARNING] myDisplayRT: plot count mismatch, expected " << this->_monitor_property->WindowProperties()[1]->PlotCount() << " but got " << this->sensors_data_->imu_sensor_count << std::endl;
+                ss << "[WARNING] myDisplayRT_ROS2Foxy: plot count mismatch, expected " << this->_monitor_property->WindowProperties()[1]->PlotCount() << " but got " << this->sensors_data_->imu_sensor_count << std::endl;
                 throw std::runtime_error(ss.str());
             }
         }
@@ -447,7 +500,7 @@ DisplayRT::Status myDisplayRT::Update()
                     if ( plot->Axes().size() != 2 )
                     {
                         std::stringstream ss;
-                        ss << "[WARNING] myDisplayRT: plot " << plot->Id() << " has invalid axis count [" << plot->Axes().size() << "]\n";
+                        ss << "[WARNING] myDisplayRT_ROS2Foxy: plot " << plot->Id() << " has invalid axis count [" << plot->Axes().size() << "]\n";
                         throw std::runtime_error(ss.str());
                     }
                 }
@@ -459,7 +512,7 @@ DisplayRT::Status myDisplayRT::Update()
                         if ( axis->Axis()->graphs().size() != 3 )
                         {
                             std::stringstream ss;
-                            ss << "[WARNING] myDisplayRT: plot " << plot->Id() << " axis " << axis->Id() << " has invalid graph count [" << axis->Axis()->graphs().size() << "]\n";
+                            ss << "[WARNING] myDisplayRT_ROS2Foxy: plot " << plot->Id() << " axis " << axis->Id() << " has invalid graph count [" << axis->Axis()->graphs().size() << "]\n";
                             throw std::runtime_error(ss.str());
                         }
                     }
@@ -480,7 +533,7 @@ DisplayRT::Status myDisplayRT::Update()
                         if ( axis->Axis()->graphs().size() != 3 )
                         {
                             std::stringstream ss;
-                            ss << "[WARNING] myDisplayRT: plot " << plot->Id() << " axis " << axis->Id() << " has invalid graph count [" << axis->Axis()->graphs().size() << "]\n";
+                            ss << "[WARNING] myDisplayRT_ROS2Foxy: plot " << plot->Id() << " axis " << axis->Id() << " has invalid graph count [" << axis->Axis()->graphs().size() << "]\n";
                             throw std::runtime_error(ss.str());
                         }
                     }
@@ -528,14 +581,14 @@ DisplayRT::Status myDisplayRT::Update()
     return Status::NORMAL;
 }
 
-void myDisplayRT::servosCallbackHandler(const lcm::ReceiveBuffer* rbuf, const std::string& channel, const msg::servos_t* msg)
+void myDisplayRT_ROS2Foxy::servosCallbackHandler(const displayrt_example_ros2foxy::msg::Servos::SharedPtr msg)
 {
-    this->servos_data_ = std::make_shared<msg::servos_t>(*msg);
+    this->servos_data_ = std::make_shared<displayrt_example_ros2foxy::msg::Servos>(*msg);
     
     { // debug
         std::stringstream ss;
         ss << "Receiving Servos Message : \n" 
-            << "channel: " << channel << ","
+            << "channel: " << this->channel_servos_ << ","
             << "timestamp: " << this->servos_data_->timestamp << std::endl;
         
         for(int i = 0; i < static_cast<int>( this->servos_data_->revolute_servo_count ); ++i)
@@ -555,14 +608,14 @@ void myDisplayRT::servosCallbackHandler(const lcm::ReceiveBuffer* rbuf, const st
     }
 }
 
-void myDisplayRT::sensorsCallbackHandler(const lcm::ReceiveBuffer* rbuf, const std::string& channel, const msg::sensors_t* msg)
+void myDisplayRT_ROS2Foxy::sensorsCallbackHandler(const displayrt_example_ros2foxy::msg::Sensors::SharedPtr msg)
 {
-    this->sensors_data_ = std::make_shared<msg::sensors_t>(*msg);
+    this->sensors_data_ = std::make_shared<displayrt_example_ros2foxy::msg::Sensors>(*msg);
     
     { // debug
         std::stringstream ss;
         ss << "Receiving Sensors Message : \n" 
-            << "channel: " << channel << ","
+            << "channel: " << this->channel_sensors_ << ","
             << "timestamp: " << this->sensors_data_->timestamp << std::endl;
         
         for(int i = 0; i < static_cast<int>( this->sensors_data_->imu_sensor_count ); ++i)
@@ -579,5 +632,5 @@ void myDisplayRT::sensorsCallbackHandler(const lcm::ReceiveBuffer* rbuf, const s
     }
 }
 
-}// namespace display_rt::example
+} // namespace display_rt::example
 

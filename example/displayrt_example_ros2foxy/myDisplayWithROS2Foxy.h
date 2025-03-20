@@ -3,6 +3,9 @@
 #include <filesystem>
 #include <chrono>
 #include <cmath>
+#include <thread>
+#include <cstdlib>
+#include <string>
 
 #include <QtWidgets/QApplication>
 #include <QtWidgets/QMainWindow>
@@ -13,56 +16,33 @@
 #include "displayRT.h"
 #include "displayRT_parser.h"
 
-#include <lcm/lcm-cpp.hpp>
-#include "msg/servos_t.hpp"
-#include "msg/sensors_t.hpp"
+// #include <lcm/lcm-cpp.hpp>
+// #include "msg/servos_t.hpp"
+// #include "msg/sensors_t.hpp"
+
+// ROS2
+#include "rclcpp/rclcpp.hpp"
+#include "std_msgs/msg/string.hpp"
+#include "displayrt_example_ros2foxy/msg/imu.hpp"
+#include "displayrt_example_ros2foxy/msg/sensors.hpp"
+#include "displayrt_example_ros2foxy/msg/revolute_servo.hpp"
+#include "displayrt_example_ros2foxy/msg/servos.hpp"
 
 
 using namespace display_rt; // for DisplayRT
+using namespace std::chrono_literals;
+using std::placeholders::_1;
 
 namespace display_rt::example {
 
-/***************/
-/* ROS2 Message */
-/***************/
+/******************/
+/* ROS2 Publisher */
+/******************/
 
-struct Servos_Message
-{
-    std::string channel = "servos";
-    int revolute_servo_count = 2;
-
-    Servos_Message( const std::string &channel = "servos", const int revolute_servo_count = 2 )
-    {
-        this->channel = channel;
-        this->revolute_servo_count = revolute_servo_count;
-    }
-
-    std::shared_ptr< msg::servos_t > generate( const int64_t timer ); 
-};
-
-struct Sensors_Message
-{
-    std::string channel = "sensors";
-    int imu_sensor_count = 1;
-
-    Sensors_Message( const std::string &channel = "sensors", const int imu_sensor_count = 1 )
-    {
-        this->channel = channel;
-        this->imu_sensor_count = imu_sensor_count;
-    }
-
-    std::shared_ptr< msg::sensors_t > generate( const int64_t timer ); 
-};
-
-
-/*****************/
-/* LCM Publisher */
-/*****************/
-
-class myPublisherLCM
+class myPublisherROS2Foxy : public rclcpp::Node
 {
     public: 
-        myPublisherLCM(); 
+        myPublisherROS2Foxy(); 
 
         int runOnce()
         {
@@ -73,18 +53,17 @@ class myPublisherLCM
         
     
     private:
-        std::shared_ptr<lcm::LCM> lcm_;
+        // std::shared_ptr<lcm::LCM> lcm_;
+        rclcpp::TimerBase::SharedPtr timer_;
+        rclcpp::Publisher<displayrt_example_ros2foxy::msg::Sensors>::SharedPtr publisher_sensors_;
+        rclcpp::Publisher<displayrt_example_ros2foxy::msg::Servos>::SharedPtr publisher_servos_;
+        // size_t count_;
 
         std::string channel_servos_ = "servos";
         std::string channel_sensors_ = "sensors";
         size_t count_revolute_servo_ = 2; 
         size_t count_imu_sensor_ = 1;
 
-
-        std::shared_ptr<Servos_Message> servos_message_;
-        std::shared_ptr<Sensors_Message> sensors_message_;
-        std::shared_ptr<msg::servos_t> servos_data_;
-        std::shared_ptr<msg::sensors_t> sensors_data_;
 
         // timer
         std::chrono::steady_clock::time_point start_time_; // Start time
@@ -97,47 +76,57 @@ class myPublisherLCM
             return elapsed_time.count();
         }
 
-        void publishServos()
+        void publishServos(); 
+
+        void publishSensors(); 
+
+        const float generateSin(const long long timer, const float amplitude, const float frequency, const float phase)
         {
-            servos_data_ = servos_message_->generate( getElapsedTimeInMilliseconds() );
-            lcm_->publish( servos_message_->channel, servos_data_.get() );
+            float timer_s = static_cast<float>(timer) / 1000.0f;
+            return amplitude * std::sin(2.0f * M_PI * frequency * timer + phase);
         }
 
-        void publishSensors()
+        const float generateSinDot(const long long timer, const float amplitude, const float frequency, const float phase)
         {
-            sensors_data_ = sensors_message_->generate( getElapsedTimeInMilliseconds() );
-            lcm_->publish( sensors_message_->channel, sensors_data_.get() );
+            float timer_s = static_cast<float>(timer) / 1000.0f;
+            return amplitude * 2.0f * M_PI * frequency * std::cos(2.0f * M_PI * frequency * timer + phase);
+        }
+
+        const float generateWhiteNoise(const float amplitude)
+        {
+            return amplitude * (2.0f * static_cast<float>(rand()) / static_cast<float>(RAND_MAX) - 1.0f);
         }
 
 }; 
 
-/******************/
-/* LCM Subscriber */
-/******************/
+/*******************/
+/* ROS2 Subscriber */
+/*******************/
 
-class mySubscriberLCM
+class mySubscriberROS2Foxy : public rclcpp::Node
 {
     public: 
-        mySubscriberLCM(); 
+        mySubscriberROS2Foxy();
 
         int spinOnce()
         {
-            this->lcm_->handle();
+            rclcpp::spin_some(this->get_node_base_interface());
             return 0;
         }
     
     private:
-        std::shared_ptr<lcm::LCM> lcm_;
+        rclcpp::Subscription<displayrt_example_ros2foxy::msg::Servos>::SharedPtr subscription_servos_;
+        rclcpp::Subscription<displayrt_example_ros2foxy::msg::Sensors>::SharedPtr subscription_sensors_;
+        
         std::string channel_servos_ = "servos";
         std::string channel_sensors_ = "sensors";
 
-        std::shared_ptr<msg::servos_t> servos_data_;
-        std::shared_ptr<msg::sensors_t> sensors_data_;
+        std::shared_ptr<displayrt_example_ros2foxy::msg::Servos> servos_data_;
+        std::shared_ptr<displayrt_example_ros2foxy::msg::Sensors> sensors_data_;
     
     private: // internal methods
-        void servosCallbackHandler(const lcm::ReceiveBuffer* rbuf, const std::string& channel, const msg::servos_t* msg); 
-
-        void sensorsCallbackHandler(const lcm::ReceiveBuffer* rbuf, const std::string& channel, const msg::sensors_t* msg); 
+        void servosCallbackHandler(const displayrt_example_ros2foxy::msg::Servos::SharedPtr msg);
+        void sensorsCallbackHandler(const displayrt_example_ros2foxy::msg::Sensors::SharedPtr msg);
 }; 
 
 
@@ -145,31 +134,31 @@ class mySubscriberLCM
 /* Display Class */
 /*****************/
 
-class myDisplayRT : public DisplayRT
+class myDisplayRT_ROS2Foxy : public DisplayRT, public rclcpp::Node
 {
     Q_OBJECT
 
     public: 
-        myDisplayRT( const std::shared_ptr<DisplayRT_Property> monitor_property ); 
+        myDisplayRT_ROS2Foxy( const std::shared_ptr<DisplayRT_Property> monitor_property ); 
 
         Status Setup() override;   
 
         Status Update() override; 
 
     private: 
-        // LCM
-        std::shared_ptr<lcm::LCM> lcm_;
+        // ROS2 
+        rclcpp::Subscription<displayrt_example_ros2foxy::msg::Servos>::SharedPtr subscription_servos_;
+        rclcpp::Subscription<displayrt_example_ros2foxy::msg::Sensors>::SharedPtr subscription_sensors_;
 
         std::string channel_servos_ = "servos";
         std::string channel_sensors_ = "sensors";
 
-        std::shared_ptr<msg::servos_t> servos_data_;
-        std::shared_ptr<msg::sensors_t> sensors_data_;
+        std::shared_ptr<displayrt_example_ros2foxy::msg::Servos> servos_data_;
+        std::shared_ptr<displayrt_example_ros2foxy::msg::Sensors> sensors_data_;
 
     private: // internal methods
-        void servosCallbackHandler(const lcm::ReceiveBuffer* rbuf, const std::string& channel, const msg::servos_t* msg); 
-
-        void sensorsCallbackHandler(const lcm::ReceiveBuffer* rbuf, const std::string& channel, const msg::sensors_t* msg); 
+    void servosCallbackHandler(const displayrt_example_ros2foxy::msg::Servos::SharedPtr msg);
+    void sensorsCallbackHandler(const displayrt_example_ros2foxy::msg::Sensors::SharedPtr msg);
 };
 
 }// namespace display_rt::example
