@@ -5,7 +5,11 @@
             "includePath": [
                 "${workspaceFolder}/**", 
                 "${workspaceFolder}/include", 
-                "${workspaceFolder}/example/displayrt_example_ros2foxy/build/rosidl_generator_cpp",
+                // "${workspaceFolder}/example/displayrt_example_ros2foxy/build/rosidl_generator_cpp",
+                // "${workspaceFolder}/example/displayrt_example_ros2humble/build/rosidl_generator_cpp",
+                // "${workspaceFolder}/example/displayrt_example_ros2humble",
+                "${workspaceFolder}/example/displayrt_example_ros2",
+                "${workspaceFolder}/example/displayrt_example_ros2/build/rosidl_generator_cpp",
                 "${workspaceFolder}/example/MultiwindowPlotWithParsedDisplayRT/lcm", 
                 "${workspaceFolder}/example/MultiwindowPlotWithParsedDisplayRT/",
                 // "${workspaceFolder}/thirdparty/mjbots/include", 
@@ -17,7 +21,7 @@
                 "${workspaceFolder}/thirdparty/QCustomPlot/", 
                 "${workspaceFolder}/thirdparty/mini-yaml/yaml/", 
                 // "/usr/include/x86_64-linux-gnu/qt5/QtWidgets" 
-                "/opt/ros/foxy/include" 
+                "/opt/ros/humble/include" 
             ],
             "defines": [],
             "compilerPath": "/usr/bin/gcc",

@@ -80,6 +80,8 @@
         "typeindex": "cpp",
         "valarray": "cpp",
         "*.txx": "cpp",
-        "shared_mutex": "cpp"
+        "shared_mutex": "cpp",
+        "coroutine": "cpp",
+        "source_location": "cpp"
     }
 }
