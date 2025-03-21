@@ -1,5 +1,10 @@
 #!/bin/bash
 
+# run it from the root directory of the project as ./setup.sh
+
+# submodules
+git submodule update --init --recursive
+
 # QT5 
 sudo apt install g++ make cmake qtbase5-dev qt5-qmake qtbase5-dev-tools libqt5widgets5 qtwayland5
 
@@ -21,3 +26,6 @@ cd "$(pwd)/build"
 # Compile the cmake project
 cmake ..
 make
+
+# Exit
+exit 0
