@@ -58,38 +58,20 @@ using std::placeholders::_1;
 
 int main(int argc, char *argv[])
 {
-  std::string new_config_path;
-  std::string new_library_path;
-  std::string updated_ld_library_path;
+    std::string new_config_path;
 
-    { // set LD_LIBRARY_PATH to include /build directory, get config file path
-      // Get the current value of LD_LIBRARY_PATH
-      const char* current_ld_library_path = getenv("LD_LIBRARY_PATH");
-
-      // Define the new path to append
+    { // get config file path
       // current working directory
       std::filesystem::path cwd = std::filesystem::current_path();
 
-      // check command line arguments -path-to-build and -path-to-config
-
       // std::string new_config_path;
-      if (argc > 3)
+      if (argc > 1)
       {
         // loop through command line arguments
         for (int i = 1; i < argc; i++)
         {
           // check if the argument is path-to-build
-          if (std::string(argv[i]) == "-path-to-build")
-          {
-            // check if the next argument is the path
-            if (i + 1 < argc)
-            {
-              // set the new_library_path to the next argument
-              new_library_path = std::string(argv[i + 1]);
-              continue;
-            }
-          }
-          else if (std::string(argv[i]) == "-path-to-config")
+          if (std::string(argv[i]) == "-path-to-config")
           {
             // check if the next argument is the path
             if (i + 1 < argc)
@@ -101,12 +83,6 @@ int main(int argc, char *argv[])
           }
         }
 
-        // check if the new_library_path is set
-        if (new_library_path.empty())
-        {
-          throw std::runtime_error("Please provide the relative path to the build directory using the command line argument '-path-to-build <path>'");
-        }
-
         // check if the new_config_path is set
         if (new_config_path.empty())
         {
@@ -115,35 +91,12 @@ int main(int argc, char *argv[])
       }
       else
       {
-        throw std::runtime_error("Please provide the relative path to the build directory using the command line arguments '-path-to-build <path>' and '-path-to-config <path>'");
+        throw std::runtime_error("Please provide the relative path to the build directory using the command line arguments '-path-to-config <path>'");
       }
-
-      // combine the new_library_path with the current working directory
-      new_library_path = (cwd / new_library_path).string();
-      std::cout << "new_library_path: " << new_library_path << std::endl;
 
       // combine the new_config_path with the current working directory
       new_config_path = (cwd / new_config_path).string();
-
-      // Create the updated LD_LIBRARY_PATH
-      // std::string updated_ld_library_path;
-      if (current_ld_library_path)
-      {
-        // Append the new path to the existing LD_LIBRARY_PATH
-        updated_ld_library_path = new_library_path + ":" + std::string(current_ld_library_path);
-      }
-      else
-      {
-        // If LD_LIBRARY_PATH is not set, just use the new path
-        updated_ld_library_path = new_library_path;
-      }
-
-      
     }
-
-    // Set the updated LD_LIBRARY_PATH
-    setenv("LD_LIBRARY_PATH", updated_ld_library_path.c_str(), 1); 
-    std::cout << "LD_LIBRARY_PATH set to: " << getenv("LD_LIBRARY_PATH") << std::endl;
 
     rclcpp::init(argc, argv);
 
