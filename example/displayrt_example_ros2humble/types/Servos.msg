@@ -1,3 +1,0 @@
-int64 timestamp
-uint32 revolute_servo_count
-RevoluteServo[] revolute_servos
