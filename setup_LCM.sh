@@ -38,6 +38,16 @@ cmake ..
 make
 sudo make install
 
+# set up the environment variables
+echo "export LCM_INSTALL_PREFIX=/usr/local" >> ~/.bashrc
+echo "export LCM_LIBRARY_DIR=/usr/local/lib" >> ~/.bashrc
+echo "export CMAKE_PREFIX_PATH=$CMAKE_PREFIX_PATH:$LCM_INSTALL_PREFIX" >> ~/.bashrc
+echo "export PKG_CONFIG_PATH=$PKG_CONFIG_PATH:$LCM_LIBRARY_DIR/pkgconfig" >> ~/.bashrc
+source ~/.bashrc
+echo -e "\e[32mLCM library v1.4.0 installed.\e[0m"
+
+
+
 # Return to the original path
 cd $current_path
 echo -e "\e[32mReturned to $current_path.\e[0m"

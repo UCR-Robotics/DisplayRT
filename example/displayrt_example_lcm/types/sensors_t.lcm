@@ -1,0 +1,15 @@
+// This is a all-sensor message type
+
+package msg;
+
+struct sensors_t
+{
+    // robot timestamp
+    int64_t timestamp;
+    
+    // imu sensor count
+    int32_t imu_sensor_count;
+    
+    // imu sensors
+    msg.imu_sensor_t imu_sensors[imu_sensor_count];
+}
