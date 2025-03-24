@@ -581,13 +581,14 @@ DisplayRT::Status myDisplayRT_ROS2::Update()
     return Status::NORMAL;
 }
 
+#ifdef ROS2_FOXY
 void myDisplayRT_ROS2::servosCallbackHandler(const displayrt_example_ros2::msg::Servos::SharedPtr msg)
 {
     this->servos_data_ = std::make_shared<displayrt_example_ros2::msg::Servos>(*msg);
     
     { // debug
         std::stringstream ss;
-        ss << "Receiving Servos Message : \n" 
+        ss << "Receiving Servos Message [ROS2 Foxy] : \n" 
             << "channel: " << this->channel_servos_ << ","
             << "timestamp: " << this->servos_data_->timestamp << std::endl;
         
@@ -607,7 +608,36 @@ void myDisplayRT_ROS2::servosCallbackHandler(const displayrt_example_ros2::msg::
         std::cout << ss.str() << std::endl;
     }
 }
+#elif defined(ROS2_GALACTIC) || defined(ROS2_HUMBLE) || defined(ROS2_JAZZY)
+void myDisplayRT_ROS2::servosCallbackHandler(const displayrt_example_ros2::msg::Servos &msg)
+{
+    this->servos_data_ = std::make_shared<displayrt_example_ros2::msg::Servos>(msg);
+    
+    { // debug
+        std::stringstream ss;
+        ss << "Receiving Servos Message [ROS2] : \n" 
+            << "channel: " << this->channel_servos_ << ","
+            << "timestamp: " << this->servos_data_->timestamp << std::endl;
+        
+        for(int i = 0; i < static_cast<int>( this->servos_data_->revolute_servo_count ); ++i)
+        {
+            ss << "revolute servo[" << i << "]: "
+                << "id: " << static_cast<int>( this->servos_data_->revolute_servos[i].id ) << ","
+                << "estimated position: " << this->servos_data_->revolute_servos[i].estimated_position << ","
+                << "velocity: " << this->servos_data_->revolute_servos[i].estimated_velocity << ","
+                << "torque: " << this->servos_data_->revolute_servos[i].estimated_torque << "; "
+                << "commanded position: " << this->servos_data_->revolute_servos[i].commanded_position << ","
+                << "velocity: " << this->servos_data_->revolute_servos[i].commanded_velocity << ","
+                << "torque: " << this->servos_data_->revolute_servos[i].commanded_torque 
+                << std::endl;
+        }
+        
+        std::cout << ss.str() << std::endl;
+    }
+}
+#endif
 
+#ifdef ROS2_FOXY
 void myDisplayRT_ROS2::sensorsCallbackHandler(const displayrt_example_ros2::msg::Sensors::SharedPtr msg)
 {
     this->sensors_data_ = std::make_shared<displayrt_example_ros2::msg::Sensors>(*msg);
@@ -631,6 +661,31 @@ void myDisplayRT_ROS2::sensorsCallbackHandler(const displayrt_example_ros2::msg:
         std::cout << ss.str() << std::endl;
     }
 }
+#elif defined(ROS2_GALACTIC) || defined(ROS2_HUMBLE) || defined(ROS2_JAZZY)
+void myDisplayRT_ROS2::sensorsCallbackHandler(const displayrt_example_ros2::msg::Sensors &msg)
+{
+    this->sensors_data_ = std::make_shared<displayrt_example_ros2::msg::Sensors>(msg);
+    
+    { // debug
+        std::stringstream ss;
+        ss << "Receiving Sensors Message : \n" 
+            << "channel: " << this->channel_sensors_ << ","
+            << "timestamp: " << this->sensors_data_->timestamp << std::endl;
+        
+        for(int i = 0; i < static_cast<int>( this->sensors_data_->imu_sensor_count ); ++i)
+        {
+            ss << "imu sensor[" << i << "]: "
+                << "id: " << static_cast<int>( this->sensors_data_->imu_sensors[i].id ) << ","
+                << "quaternion: " << this->sensors_data_->imu_sensors[i].quaternion[0] << ", " << this->sensors_data_->imu_sensors[i].quaternion[1] << ", " << this->sensors_data_->imu_sensors[i].quaternion[2] << ", " << this->sensors_data_->imu_sensors[i].quaternion[3] << ";"
+                << "euler rate: " << this->sensors_data_->imu_sensors[i].euler_rate[0] << ", " << this->sensors_data_->imu_sensors[i].euler_rate[1] << ", " << this->sensors_data_->imu_sensors[i].euler_rate[2] << ";"
+                << "acceleration: " << this->sensors_data_->imu_sensors[i].acceleration[0] << ", " << this->sensors_data_->imu_sensors[i].acceleration[1] << ", " << this->sensors_data_->imu_sensors[i].acceleration[2] 
+                << std::endl;
+        }
+        
+        std::cout << ss.str() << std::endl;
+    }
+}
+#endif
 
 } // namespace display_rt::example
 

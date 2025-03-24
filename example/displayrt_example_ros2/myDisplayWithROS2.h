@@ -157,8 +157,17 @@ class myDisplayRT_ROS2 : public DisplayRT, public rclcpp::Node
         std::shared_ptr<displayrt_example_ros2::msg::Sensors> sensors_data_;
 
     private: // internal methods
-    void servosCallbackHandler(const displayrt_example_ros2::msg::Servos::SharedPtr msg);
-    void sensorsCallbackHandler(const displayrt_example_ros2::msg::Sensors::SharedPtr msg);
+        #ifdef ROS2_FOXY
+        void servosCallbackHandler(const displayrt_example_ros2::msg::Servos::SharedPtr msg);
+        #elif defined(ROS2_GALACTIC) || defined(ROS2_HUMBLE) || defined(ROS2_JAZZY)
+        void servosCallbackHandler(const displayrt_example_ros2::msg::Servos &msg);
+        #endif 
+
+        #ifdef ROS2_FOXY
+        void sensorsCallbackHandler(const displayrt_example_ros2::msg::Sensors::SharedPtr msg);
+        #elif defined(ROS2_GALACTIC) || defined(ROS2_HUMBLE) || defined(ROS2_JAZZY)
+        void sensorsCallbackHandler(const displayrt_example_ros2::msg::Sensors &msg);
+        #endif
 };
 
 }// namespace display_rt::example
