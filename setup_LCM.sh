@@ -1,7 +1,13 @@
 #!/bin/bash
 
 # Note: only run this script when you know what you are doing.
-# Setup LCM v1.4.0 
+# Setup LCM v1.4.0 for Ubuntu 20.04 LTS and 22.04 LTS
+
+# check Ubuntu version
+if [ "$(lsb_release -rs)" != "20.04" ] && [ "$(lsb_release -rs)" != "22.04" ]; then
+    echo -e "\e[31mThis script is for Ubuntu 20.04 LTS and 22.04 LTS only.\e[0m"
+    exit 1
+fi
 
 
 # check if liblcm.so file exists in the /usr/local/lib directory
