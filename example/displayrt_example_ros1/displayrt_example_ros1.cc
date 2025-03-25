@@ -47,14 +47,6 @@
 #include "ros/ros.h"
 #include "std_msgs/String.h"
 
-// // ROS2
-// #include "rclcpp/rclcpp.hpp"
-// #include "std_msgs/msg/string.hpp"
-// #include "displayrt_example_ros2/msg/imu.hpp"
-// #include "displayrt_example_ros2/msg/sensors.hpp"
-// #include "displayrt_example_ros2/msg/revolute_servo.hpp"
-// #include "displayrt_example_ros2/msg/servos.hpp"
-
 
 using namespace display_rt; // for DisplayRT
 using namespace std::chrono_literals;
@@ -208,9 +200,6 @@ int main(int argc, char *argv[])
     // );
 
     // myDisplayRT thread
-    // parser
-    // std::string path = std::filesystem::current_path().string() + "/../example/MultiwindowPlotWithParsedDisplayRT/config.yaml";
-    // std::string path = std::filesystem::current_path().string() + "/config.yaml";
     // print out the path
     std::cout << "\nconfig file path: " << new_config_path << std::endl;
 
@@ -235,49 +224,4 @@ int main(int argc, char *argv[])
     ros::shutdown();
 
     return 0;
-
-
-    // // rclcpp::init(argc, argv);
-    // ros::init(argc, argv, "displayrt_example_ros1_node");
-    // ros::NodeHandle n;
-    // ros::Publisher chatter_pub = n.advertise<std_msgs::String>("chatter", 1000);
-    // ros::Rate loop_rate(10);
-
-    // int count = 0;
-    // while (ros::ok())
-    // {
-    //   std_msgs::String msg;
-
-    //   std::stringstream ss;
-    //   ss << "hello world " << count;
-    //   msg.data = ss.str();
-
-    //   ROS_INFO("%s", msg.data.c_str());
-
-    //   chatter_pub.publish(msg);
-    //   ros::spinOnce();
-    //   loop_rate.sleep();
-    //   ++count;
-    // }
-
-    // return 0;
-
-
-
-    // // Initialize ROS
-    // ros::init(argc, argv, "publisher_subscriber_example");
-
-    // // Create instances of the publisher and subscriber
-    // PublisherNode publisher;
-    // SubscriberNode subscriber;
-
-    // // Create threads for the publisher and subscriber
-    // std::thread publisher_thread(&PublisherNode::run, &publisher);
-    // std::thread subscriber_thread(&SubscriberNode::run, &subscriber);
-
-    // // Wait for threads to finish
-    // publisher_thread.join();
-    // subscriber_thread.join();
-
-    // return 0;
 }

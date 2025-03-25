@@ -50,6 +50,11 @@ use_ros2() {
     export PATH=/opt/ros/foxy/bin:$PATH
     export PYTHONPATH=/opt/ros/foxy/lib/python3/dist-packages:$PYTHONPATH
 
+    # Additional setup
+    export ROS_DOMAIN_ID=0
+    export ROS_LOCALHOST_ONLY=1
+    export RMW_IMPLEMENTATION=rmw_fastrtps_cpp
+
     echo "Environment set for ROS 2 Foxy."
 }
 

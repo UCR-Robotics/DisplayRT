@@ -34,7 +34,6 @@
 #include <QtWidgets/QGridLayout>
 #include <QtCore/QTimer>
 
-// #include "qcustomplot.h"
 #include "displayRT.h"
 #include "displayRT_parser.h"
 

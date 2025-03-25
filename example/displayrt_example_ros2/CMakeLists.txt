@@ -1,11 +1,7 @@
 cmake_minimum_required(VERSION 3.10)
-# cmake_policy(SET CMP0071 NEW)
-
 
 get_filename_component(PROJECT ${CMAKE_SOURCE_DIR} NAME)
 project(${PROJECT})
-# set(PROJECT_NAME ${PROJECT})
-# project(${PROJECT_NAME})
 
 if(NOT ${CMAKE_SOURCE_DIR} STREQUAL ${CMAKE_CURRENT_SOURCE_DIR})
     message(FATAL_ERROR "CMake must be run from the project folder: ${CMAKE_CURRENT_SOURCE_DIR}")
@@ -30,7 +26,6 @@ else()
     message(FATAL_ERROR "Unsupported ROS2 distribution: " $ENV{ROS_DISTRO})
 endif()
 
-# message(STATUS "Entering: " ${CMAKE_CURRENT_SOURCE_DIR})
 message(STATUS "Build project: " ${PROJECT_NAME})
 message(STATUS "If cross-compiling: " ${CMAKE_CROSSCOMPILING})
 message(STATUS "Target platform: " ${CMAKE_SYSTEM_NAME})
@@ -51,12 +46,11 @@ set(CMAKE_AUTOMOC ON)
 find_package(ament_cmake REQUIRED)
 find_package(rosidl_default_generators REQUIRED)
 find_package(rclcpp REQUIRED)
-# find_package(rcutils REQUIRED)
 find_package(std_msgs REQUIRED)
 find_package(rosidl_typesupport_fastrtps_cpp REQUIRED)
 find_package(rosidl_typesupport_introspection_cpp REQUIRED)
 
-# Add custom message files
+# Generate custom message headers
 set(msg_files
     types/IMU.msg 
     types/RevoluteServo.msg
@@ -64,22 +58,17 @@ set(msg_files
     types/Servos.msg
 )
 
-# Generate ROS 2 interfaces
 rosidl_generate_interfaces(${PROJECT_NAME}
     ${msg_files}
     DEPENDENCIES std_msgs
 )
 
-
 # Find DisplayRT dependencies
-# QT and QCustomPlot
 find_package(Qt5Widgets REQUIRED)
 find_package(Qt5Core REQUIRED)
 find_package(Qt5PrintSupport REQUIRED)
 find_package(Qt5Gui REQUIRED)
 find_package(QCustomPlot REQUIRED)
-
-# Add the DisplayRT library
 find_package(DisplayRT REQUIRED)
 
 # Add the executable
@@ -118,7 +107,6 @@ target_include_directories(displayrt_example_ros2_node PUBLIC
     ${CMAKE_CURRENT_BINARY_DIR}
 )
 
-# Link the shared library and ROS 2 dependencies
 target_link_libraries(displayrt_example_ros2_node
     Qt5::Core
     Qt5::Widgets
@@ -172,7 +160,7 @@ set_target_properties(displayrt_example_ros2_node
 #     DESTINATION ${CMAKE_INSTALL_PREFIX}
 # )
 
-# Export dependencies
+
 ament_export_dependencies(rosidl_default_runtime)
 
 ament_package()

@@ -146,9 +146,6 @@ int main(int argc, char *argv[])
     // );
 
     // myDisplayRT thread
-    // parser
-    // std::string path = std::filesystem::current_path().string() + "/../example/MultiwindowPlotWithParsedDisplayRT/config.yaml";
-    // std::string path = std::filesystem::current_path().string() + "/config.yaml";
     // print out the path
     std::cout << "\nconfig file path: " << new_config_path << std::endl;
 
