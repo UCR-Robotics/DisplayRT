@@ -107,14 +107,16 @@ add_executable(displayrt_example_ros2_node
     ${MINIYAML_SOURCE}
 )
 
-add_dependencies(displayrt_example_ros2_node
-    # ${PROJECT_NAME}
-    ${PROJECT_NAME}__rosidl_typesupport_cpp
-    ${PROJECT_NAME}__rosidl_typesupport_fastrtps_cpp
-    ${PROJECT_NAME}__rosidl_typesupport_introspection_cpp
+target_include_directories(displayrt_example_ros2_node PUBLIC
+    ${CMAKE_SOURCE_DIR}
+    ${DisplayRT_INCLUDE_DIR} 
+    ${QCustomPlot_INCLUDE_DIR}
+    ${rclcpp_INCLUDE_DIRS} 
+    ${std_msgs_INCLUDE_DIRS} 
+    ${CMAKE_SOURCE_DIR}/../../thirdparty/mini-yaml/yaml 
+    ${CMAKE_CURRENT_BINARY_DIR}/rosidl_generator_cpp
+    ${CMAKE_CURRENT_BINARY_DIR}
 )
-
-# rosidl_get_typesupport_target(cpp_typesupport_target ${PROJECT_NAME} "rosidl_typesupport_cpp")
 
 # Link the shared library and ROS 2 dependencies
 target_link_libraries(displayrt_example_ros2_node
@@ -128,31 +130,18 @@ target_link_libraries(displayrt_example_ros2_node
     ${PROJECT_NAME}__rosidl_typesupport_cpp
     ${PROJECT_NAME}__rosidl_typesupport_fastrtps_cpp
     ${PROJECT_NAME}__rosidl_typesupport_introspection_cpp
-    # ${PROJECT_NAME}
-    # ${cpp_typesupport_target}
 )
 
 ament_target_dependencies(displayrt_example_ros2_node
     rclcpp
     std_msgs
-    # cpp_typesupport_target
     rosidl_typesupport_fastrtps_cpp
-    # ${PROJECT_NAME}
-    # ${PROJECT_NAME}__rosidl_typesupport_cpp
-    # ${PROJECT_NAME}__rosidl_typesupport_fastrtps_cpp
-    # ${PROJECT_NAME}__rosidl_typesupport_introspection_cpp
 )
 
-# Include directories
-target_include_directories(displayrt_example_ros2_node PUBLIC
-    ${CMAKE_SOURCE_DIR}
-    ${DisplayRT_INCLUDE_DIR} 
-    ${QCustomPlot_INCLUDE_DIR}
-    ${rclcpp_INCLUDE_DIRS} 
-    ${std_msgs_INCLUDE_DIRS} 
-    ${CMAKE_SOURCE_DIR}/../../thirdparty/mini-yaml/yaml 
-    ${CMAKE_CURRENT_BINARY_DIR}/rosidl_generator_cpp
-    ${CMAKE_CURRENT_BINARY_DIR}
+add_dependencies(displayrt_example_ros2_node
+    ${PROJECT_NAME}__rosidl_typesupport_cpp
+    ${PROJECT_NAME}__rosidl_typesupport_fastrtps_cpp
+    ${PROJECT_NAME}__rosidl_typesupport_introspection_cpp
 )
 
 set_target_properties(displayrt_example_ros2_node
