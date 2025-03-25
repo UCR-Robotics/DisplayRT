@@ -9,6 +9,13 @@
 # It will also remove paths related to the other ROS version to avoid conflicts.
 # Make sure to run this script in a bash shell.
 
+# check ubuntu version, only accept ubuntu 20.04
+if [ "$(lsb_release -rs)" != "20.04" ]; then
+    # red warning
+    echo -e "\033[31mError: This script only supports Ubuntu 20.04.\033[0m"
+    exit 1
+fi
+
 # Function to remove paths related to the other ROS version
 remove_other_ros_paths() {
     local ros_version_path=$1
