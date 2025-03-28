@@ -186,12 +186,12 @@ void myPublisherROS1::publishServos()
         servo_message.parent_id = 0;
         servo_message.enabled = true;
 
-        servo_message.commanded_position = generateSin(timestamp, 1.0, 0.1, static_cast<float>(i) * 0.5);
-        servo_message.commanded_velocity = generateSinDot(timestamp, 1.0, 0.1, static_cast<float>(i) * 0.5);
+        servo_message.commanded_position = generateSin(timestamp, 1.0, 0.5, static_cast<float>(i) * M_PI_4);
+        servo_message.commanded_velocity = generateSinDot(timestamp, 1.0, 0.5, static_cast<float>(i) * M_PI_4);
         servo_message.commanded_torque = 0.5 * servo_message.commanded_position; 
 
-        servo_message.estimated_position = servo_message.commanded_position + generateWhiteNoise(0.1);
-        servo_message.estimated_velocity = servo_message.commanded_velocity + generateWhiteNoise(0.1);
+        servo_message.estimated_position = servo_message.commanded_position + generateWhiteNoise(0.5);
+        servo_message.estimated_velocity = servo_message.commanded_velocity + generateWhiteNoise(1.0);
         servo_message.estimated_torque = servo_message.commanded_torque + generateWhiteNoise(0.1);
 
         message.revolute_servos.push_back(servo_message);
@@ -220,12 +220,12 @@ void myPublisherROS1::publishSensors()
         imu_message.quaternion[1] = 0.0;
         imu_message.quaternion[2] = 0.0;
         imu_message.quaternion[3] = 0.0;
-        imu_message.euler_rate[0] = generateSin(timestamp, 2.0, 0.5, static_cast<float>(i) * 0.5 + 0.0) + generateWhiteNoise(0.5);
-        imu_message.euler_rate[1] = generateSin(timestamp, 2.0, 0.5, static_cast<float>(i) * 0.5 + 0.1) + generateWhiteNoise(0.5);
-        imu_message.euler_rate[2] = generateSin(timestamp, 2.0, 0.5, static_cast<float>(i) * 0.5 + 0.2) + generateWhiteNoise(0.5);
-        imu_message.acceleration[0] = generateSin(timestamp, 4.0, 1, static_cast<float>(i) * 0.5 + 0.0) + generateWhiteNoise(1);
-        imu_message.acceleration[1] = generateSin(timestamp, 4.0, 1, static_cast<float>(i) * 0.5 + 0.1) + generateWhiteNoise(1);
-        imu_message.acceleration[2] = generateSin(timestamp, 4.0, 1, static_cast<float>(i) * 0.5 + 0.2) + generateWhiteNoise(1);
+        imu_message.euler_rate[0] = generateSin(timestamp, 2.0, 0.5, static_cast<float>(i) * 0.5 + 0.0*M_PI_4) + generateWhiteNoise(0.5);
+        imu_message.euler_rate[1] = generateSin(timestamp, 2.0, 0.5, static_cast<float>(i) * 0.5 + 1.0*M_PI_4) + generateWhiteNoise(0.5);
+        imu_message.euler_rate[2] = generateSin(timestamp, 2.0, 0.5, static_cast<float>(i) * 0.5 + 2.0*M_PI_4) + generateWhiteNoise(0.5);
+        imu_message.acceleration[0] = generateSin(timestamp, 4.0, 1, static_cast<float>(i) * 0.5 + 0.0*M_PI_4) + generateWhiteNoise(1);
+        imu_message.acceleration[1] = generateSin(timestamp, 4.0, 1, static_cast<float>(i) * 0.5 + 1.0*M_PI_4) + generateWhiteNoise(1);
+        imu_message.acceleration[2] = generateSin(timestamp, 4.0, 1, static_cast<float>(i) * 0.5 + 2.0*M_PI_4) + generateWhiteNoise(1);
 
         message.imu_sensors.push_back(imu_message);
     }
@@ -314,7 +314,7 @@ DisplayRT::Status myDisplayRT_ROS2::Setup()
 
     QTimer *dataTimer = new QTimer( this->_app.get() );
     QObject::connect( dataTimer, &QTimer::timeout, this, &myDisplayRT_ROS2::Update );
-    dataTimer->start(50); // Update every 100 ms
+    dataTimer->start(10); // Update every 10 ms
 
     return Status::NORMAL;
 }    

@@ -24,141 +24,6 @@ using namespace display_rt; // for DisplayRT
 
 namespace display_rt::example {
 
-/***************/
-/* LCM Message */
-/***************/
-
-std::shared_ptr< msg::servos_t > Servos_Message::generate( const int64_t timer )
-{
-    // servos
-    auto data = std::make_shared<msg::servos_t>();
-    data->timestamp = timer;
-    data->revolute_servo_count = this->revolute_servo_count; 
-    data->revolute_servos.resize(data->revolute_servo_count);
-    
-    // lambda: generate sinonoidal signal based on time
-    auto generate_sin = [](const int64_t timer, const float amplitude, const float frequency, const float phase) -> float
-    {
-        float timer_s = static_cast<float>(timer) / 1000.0f;
-        return amplitude * std::sin(2.0f * M_PI * frequency * timer + phase);
-    };
-
-    // lambda: generate time derivative of sinonoidal signal based on time
-    auto generate_sin_dot = [](const int64_t timer, const float amplitude, const float frequency, const float phase) -> float
-    {
-        float timer_s = timer / 1000.0f;
-        return amplitude * 2.0f * M_PI * frequency * std::cos(2.0f * M_PI * frequency * timer + phase);
-    };
-
-    // lambda: generate white noise signal 
-    auto generate_white_noise = [](const float amplitude) -> float
-    {
-        return amplitude * (2.0f * static_cast<float>(rand()) / static_cast<float>(RAND_MAX) - 1.0f);
-    };
-
-    for(int i = 0; i < static_cast<int>( data->revolute_servo_count ); i++)
-    {
-        data->revolute_servos[i].id = i;
-
-        data->revolute_servos[i].commanded_position = generate_sin(timer, 1.0, 0.1, static_cast<float>(i) * 0.5);
-        data->revolute_servos[i].commanded_velocity = generate_sin_dot(timer, 1.0, 0.1, static_cast<float>(i) * 0.5);
-        data->revolute_servos[i].commanded_torque = 0.5 * data->revolute_servos[i].commanded_position; 
-
-        data->revolute_servos[i].estimated_position = data->revolute_servos[i].commanded_position + generate_white_noise(0.1);
-        data->revolute_servos[i].estimated_velocity = data->revolute_servos[i].commanded_velocity + generate_white_noise(0.1);
-        data->revolute_servos[i].estimated_torque = data->revolute_servos[i].commanded_torque + generate_white_noise(0.1);
-    }
-
-    { // debug
-        std::stringstream ss;
-        ss << "Publishing Servos Message : \n" 
-        << "channel: " << channel << ","
-        << "timestamp: " << data->timestamp << std::endl;
-        
-        for(int i = 0; i < static_cast<int>( data->revolute_servo_count); ++i)
-        {
-        ss << "revolute servo[" << i << "]: "
-            << "id: " << static_cast<int>( data->revolute_servos[i].id ) << ","
-            << "estimated position: " << data->revolute_servos[i].estimated_position << ","
-            << "velocity: " << data->revolute_servos[i].estimated_velocity << ","
-            << "torque: " << data->revolute_servos[i].estimated_torque << "; "
-            << "commanded position: " << data->revolute_servos[i].commanded_position << ","
-            << "velocity: " << data->revolute_servos[i].commanded_velocity << ","
-            << "torque: " << data->revolute_servos[i].commanded_torque 
-            << std::endl;
-        }
-        
-        std::cout << ss.str() << std::endl;
-    }
-
-    return data;
-}
-
-std::shared_ptr< msg::sensors_t > Sensors_Message::generate( const int64_t timer )
-{
-    // sensors
-    auto data = std::make_shared<msg::sensors_t>();
-    data->timestamp = timer;
-    data->imu_sensor_count = this->imu_sensor_count; 
-    data->imu_sensors.resize(data->imu_sensor_count);
-    
-    // lambda: generate sinonoidal signal based on time
-    auto generate_sin = [](const int64_t timer, const float amplitude, const float frequency, const float phase) -> float
-    {
-        float timer_s = static_cast<float>(timer) / 1000.0f;
-        return amplitude * std::sin(2.0f * M_PI * frequency * timer_s + phase);
-    };
-
-    // lambda: generate time derivative of sinonoidal signal based on time
-    auto generate_sin_dot = [](const int64_t timer, const float amplitude, const float frequency, const float phase) -> float
-    {
-        float timer_s = static_cast<float>( timer ) / 1000.0f;
-        return amplitude * 2.0f * M_PI * frequency * std::cos(2.0f * M_PI * frequency * timer_s + phase);
-    };
-
-    // lambda: generate white noise signal 
-    auto generate_white_noise = [](const float amplitude) -> float
-    {
-        return amplitude * (2.0f * static_cast<float>(rand()) / static_cast<float>(RAND_MAX) - 1.0f);
-    };  
-
-    for(int i = 0; i < static_cast<int>( data->imu_sensor_count ); i++)
-    {
-        data->imu_sensors[i].id = i;
-        data->imu_sensors[i].quaternion[0] = 1.0;
-        data->imu_sensors[i].quaternion[1] = 0.0;
-        data->imu_sensors[i].quaternion[2] = 0.0;
-        data->imu_sensors[i].quaternion[3] = 0.0;
-        data->imu_sensors[i].euler_rate[0] = generate_sin(timer, 2.0, 0.5, static_cast<float>(i) * 0.5 + 0.0) + generate_white_noise(0.5);
-        data->imu_sensors[i].euler_rate[1] = generate_sin(timer, 2.0, 0.5, static_cast<float>(i) * 0.5 + 0.1) + generate_white_noise(0.5);
-        data->imu_sensors[i].euler_rate[2] = generate_sin(timer, 2.0, 0.5, static_cast<float>(i) * 0.5 + 0.2) + generate_white_noise(0.5);
-        data->imu_sensors[i].acceleration[0] = generate_sin(timer, 4.0, 1, static_cast<float>(i) * 0.5 + 0.0) + generate_white_noise(1);
-        data->imu_sensors[i].acceleration[1] = generate_sin(timer, 4.0, 1, static_cast<float>(i) * 0.5 + 0.1) + generate_white_noise(1);
-        data->imu_sensors[i].acceleration[2] = generate_sin(timer, 4.0, 1, static_cast<float>(i) * 0.5 + 0.2) + generate_white_noise(1);
-    }
-
-    { // debug
-        std::stringstream ss;
-        ss << "Publishing Sensors Message : \n" 
-                << "channel: " << channel << ","
-                << "timestamp: " << data->timestamp << std::endl;
-        
-        for(int i = 0; i < static_cast<int>( data->imu_sensor_count ); ++i)
-        {
-            ss << "imu sensor[" << i << "]: "
-                << "id: " << static_cast<int>( data->imu_sensors[i].id ) << ","
-                << "quaternion: " << data->imu_sensors[i].quaternion[0] << ", " << data->imu_sensors[i].quaternion[1] << ", " << data->imu_sensors[i].quaternion[2] << ", " << data->imu_sensors[i].quaternion[3] << ";"
-                << "euler rate: " << data->imu_sensors[i].euler_rate[0] << ", " << data->imu_sensors[i].euler_rate[1] << ", " << data->imu_sensors[i].euler_rate[2] << ";"
-                << "acceleration: " << data->imu_sensors[i].acceleration[0] << ", " << data->imu_sensors[i].acceleration[1] << ", " << data->imu_sensors[i].acceleration[2] 
-                << std::endl;
-        }
-        
-        std::cout << ss.str() << std::endl;
-    }
-
-    return data;
-}
-
 myPublisherLCM::myPublisherLCM()
 {
     this->lcm_ = std::make_shared<lcm::LCM>("udpm://239.255.76.67:7667?ttl=2");
@@ -171,11 +36,107 @@ myPublisherLCM::myPublisherLCM()
         std::cout << "[INFO] myPublisherLCM: LCM is good" << std::endl;
     }
 
-    this->servos_message_ = std::make_shared<Servos_Message>( this->channel_servos_, this->count_revolute_servo_ );
-    this->sensors_message_ = std::make_shared<Sensors_Message>(  this->channel_sensors_, this->count_imu_sensor_ );
+    // this->servos_message_ = std::make_shared<Servos_Message>( this->channel_servos_, this->count_revolute_servo_ );
+    // this->sensors_message_ = std::make_shared<Sensors_Message>(  this->channel_sensors_, this->count_imu_sensor_ );
 
     // Capture the start time
     start_time_ = std::chrono::steady_clock::now();
+}
+
+void myPublisherLCM::publishServos()
+{
+    const auto timer = this->getElapsedTimeInMilliseconds();
+
+    // servos
+    auto data = std::make_shared<msg::servos_t>();
+    data->timestamp = timer;
+    data->revolute_servo_count = this->count_revolute_servo_; 
+    data->revolute_servos.resize(data->revolute_servo_count);
+
+    for(int i = 0; i < static_cast<int>( data->revolute_servo_count ); i++)
+    {
+        data->revolute_servos[i].id = i;
+
+        data->revolute_servos[i].commanded_position = generateSin(timer, 1.0, 0.5, static_cast<float>(i) * M_PI_4);
+        data->revolute_servos[i].commanded_velocity = generateSinDot(timer, 1.0, 0.5, static_cast<float>(i) * M_PI_4);
+        data->revolute_servos[i].commanded_torque = 0.5 * data->revolute_servos[i].commanded_position; 
+
+        data->revolute_servos[i].estimated_position = data->revolute_servos[i].commanded_position + generateWhiteNoise(0.5);
+        data->revolute_servos[i].estimated_velocity = data->revolute_servos[i].commanded_velocity + generateWhiteNoise(1.0);
+        data->revolute_servos[i].estimated_torque = data->revolute_servos[i].commanded_torque + generateWhiteNoise(0.1);
+    }
+
+    { // debug
+        std::stringstream ss;
+        ss << "Publishing Servos Message : \n" 
+        << "channel: " << this->channel_servos_ << ","
+        << "timestamp: " << data->timestamp << std::endl;
+        
+        // for(int i = 0; i < static_cast<int>( data->revolute_servo_count); ++i)
+        // {
+        // ss << "revolute servo[" << i << "]: "
+        //     << "id: " << static_cast<int>( data->revolute_servos[i].id ) << ","
+        //     << "estimated position: " << data->revolute_servos[i].estimated_position << ","
+        //     << "velocity: " << data->revolute_servos[i].estimated_velocity << ","
+        //     << "torque: " << data->revolute_servos[i].estimated_torque << "; "
+        //     << "commanded position: " << data->revolute_servos[i].commanded_position << ","
+        //     << "velocity: " << data->revolute_servos[i].commanded_velocity << ","
+        //     << "torque: " << data->revolute_servos[i].commanded_torque 
+        //     << std::endl;
+        // }
+        
+        std::cout << ss.str() << std::endl;
+    }
+
+    // publish
+    this->lcm_->publish(this->channel_servos_, data.get());
+}
+
+void myPublisherLCM::publishSensors()
+{
+    const auto timer = this->getElapsedTimeInMilliseconds();
+
+    // sensors
+    auto data = std::make_shared<msg::sensors_t>();
+    data->timestamp = timer;
+    data->imu_sensor_count = this->count_imu_sensor_; 
+    data->imu_sensors.resize(data->imu_sensor_count);
+
+    for(int i = 0; i < static_cast<int>( data->imu_sensor_count ); i++)
+    {
+        data->imu_sensors[i].id = i;
+        data->imu_sensors[i].quaternion[0] = 1.0;
+        data->imu_sensors[i].quaternion[1] = 0.0;
+        data->imu_sensors[i].quaternion[2] = 0.0;
+        data->imu_sensors[i].quaternion[3] = 0.0;
+        data->imu_sensors[i].euler_rate[0] = generateSin(timer, 2.0, 0.5, static_cast<float>(i) * 0.5 + 0.0*M_PI_4) + generateWhiteNoise(0.5);
+        data->imu_sensors[i].euler_rate[1] = generateSin(timer, 2.0, 0.5, static_cast<float>(i) * 0.5 + 1.0*M_PI_4) + generateWhiteNoise(0.5);
+        data->imu_sensors[i].euler_rate[2] = generateSin(timer, 2.0, 0.5, static_cast<float>(i) * 0.5 + 2.0*M_PI_4) + generateWhiteNoise(0.5);
+        data->imu_sensors[i].acceleration[0] = generateSin(timer, 4.0, 1, static_cast<float>(i) * 0.5 + 0.0*M_PI_4) + generateWhiteNoise(1);
+        data->imu_sensors[i].acceleration[1] = generateSin(timer, 4.0, 1, static_cast<float>(i) * 0.5 + 1.0*M_PI_4) + generateWhiteNoise(1);
+        data->imu_sensors[i].acceleration[2] = generateSin(timer, 4.0, 1, static_cast<float>(i) * 0.5 + 2.0*M_PI_4) + generateWhiteNoise(1);
+    }
+
+    { // debug
+        std::stringstream ss;
+        ss << "Publishing Sensors Message : \n" 
+                << "channel: " << this->channel_sensors_ << ","
+                << "timestamp: " << data->timestamp << std::endl;
+        
+        // for(int i = 0; i < static_cast<int>( data->imu_sensor_count ); ++i)
+        // {
+        //     ss << "imu sensor[" << i << "]: "
+        //         << "id: " << static_cast<int>( data->imu_sensors[i].id ) << ","
+        //         << "quaternion: " << data->imu_sensors[i].quaternion[0] << ", " << data->imu_sensors[i].quaternion[1] << ", " << data->imu_sensors[i].quaternion[2] << ", " << data->imu_sensors[i].quaternion[3] << ";"
+        //         << "euler rate: " << data->imu_sensors[i].euler_rate[0] << ", " << data->imu_sensors[i].euler_rate[1] << ", " << data->imu_sensors[i].euler_rate[2] << ";"
+        //         << "acceleration: " << data->imu_sensors[i].acceleration[0] << ", " << data->imu_sensors[i].acceleration[1] << ", " << data->imu_sensors[i].acceleration[2] 
+        //         << std::endl;
+        // }
+        
+        std::cout << ss.str() << std::endl;
+    }
+    // publish
+    this->lcm_->publish(this->channel_sensors_, data.get());
 }
 
 mySubscriberLCM::mySubscriberLCM()
@@ -270,7 +231,7 @@ DisplayRT::Status myDisplayRT::Setup()
 
     QTimer *dataTimer = new QTimer( this->_app.get() );
     QObject::connect( dataTimer, &QTimer::timeout, this, &myDisplayRT::Update );
-    dataTimer->start(50); // Update every 100 ms
+    dataTimer->start(10); // Update every 10 ms
 
     return Status::NORMAL;
 }    

@@ -81,13 +81,13 @@ class myPublisherROS1
         const float generateSin(const long long timer, const float amplitude, const float frequency, const float phase)
         {
             float timer_s = static_cast<float>(timer) / 1000.0f;
-            return amplitude * std::sin(2.0f * M_PI * frequency * timer + phase);
+            return amplitude * std::sin(2.0f * M_PI * frequency * timer_s + phase);
         }
 
         const float generateSinDot(const long long timer, const float amplitude, const float frequency, const float phase)
         {
             float timer_s = static_cast<float>(timer) / 1000.0f;
-            return amplitude * 2.0f * M_PI * frequency * std::cos(2.0f * M_PI * frequency * timer + phase);
+            return amplitude * 2.0f * M_PI * frequency * std::cos(2.0f * M_PI * frequency * timer_s + phase);
         }
 
         const float generateWhiteNoise(const float amplitude)

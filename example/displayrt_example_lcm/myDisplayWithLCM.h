@@ -22,39 +22,6 @@ using namespace display_rt; // for DisplayRT
 
 namespace display_rt::example {
 
-/***************/
-/* LCM Message */
-/***************/
-
-struct Servos_Message
-{
-    std::string channel = "servos";
-    int revolute_servo_count = 2;
-
-    Servos_Message( const std::string &channel = "servos", const int revolute_servo_count = 2 )
-    {
-        this->channel = channel;
-        this->revolute_servo_count = revolute_servo_count;
-    }
-
-    std::shared_ptr< msg::servos_t > generate( const int64_t timer ); 
-};
-
-struct Sensors_Message
-{
-    std::string channel = "sensors";
-    int imu_sensor_count = 1;
-
-    Sensors_Message( const std::string &channel = "sensors", const int imu_sensor_count = 1 )
-    {
-        this->channel = channel;
-        this->imu_sensor_count = imu_sensor_count;
-    }
-
-    std::shared_ptr< msg::sensors_t > generate( const int64_t timer ); 
-};
-
-
 /*****************/
 /* LCM Publisher */
 /*****************/
@@ -81,8 +48,8 @@ class myPublisherLCM
         size_t count_imu_sensor_ = 1;
 
 
-        std::shared_ptr<Servos_Message> servos_message_;
-        std::shared_ptr<Sensors_Message> sensors_message_;
+        // std::shared_ptr<Servos_Message> servos_message_;
+        // std::shared_ptr<Sensors_Message> sensors_message_;
         std::shared_ptr<msg::servos_t> servos_data_;
         std::shared_ptr<msg::sensors_t> sensors_data_;
 
@@ -97,16 +64,33 @@ class myPublisherLCM
             return elapsed_time.count();
         }
 
-        void publishServos()
+        void publishServos(); 
+        // {
+        //     servos_data_ = servos_message_->generate( getElapsedTimeInMilliseconds() );
+        //     lcm_->publish( servos_message_->channel, servos_data_.get() );
+        // }
+
+        void publishSensors(); 
+        // {
+        //     sensors_data_ = sensors_message_->generate( getElapsedTimeInMilliseconds() );
+        //     lcm_->publish( sensors_message_->channel, sensors_data_.get() );
+        // }
+
+        const float generateSin(const long long timer, const float amplitude, const float frequency, const float phase)
         {
-            servos_data_ = servos_message_->generate( getElapsedTimeInMilliseconds() );
-            lcm_->publish( servos_message_->channel, servos_data_.get() );
+            float timer_s = static_cast<float>(timer) / 1000.0f;
+            return amplitude * std::sin(2.0f * M_PI * frequency * timer_s + phase);
         }
 
-        void publishSensors()
+        const float generateSinDot(const long long timer, const float amplitude, const float frequency, const float phase)
         {
-            sensors_data_ = sensors_message_->generate( getElapsedTimeInMilliseconds() );
-            lcm_->publish( sensors_message_->channel, sensors_data_.get() );
+            float timer_s = static_cast<float>(timer) / 1000.0f;
+            return amplitude * 2.0f * M_PI * frequency * std::cos(2.0f * M_PI * frequency * timer_s + phase);
+        }
+
+        const float generateWhiteNoise(const float amplitude)
+        {
+            return amplitude * (2.0f * static_cast<float>(rand()) / static_cast<float>(RAND_MAX) - 1.0f);
         }
 
 }; 

@@ -117,8 +117,8 @@ int main(int argc, char *argv[])
                     std::cerr << "Exception: " << e.what() << std::endl;
                 }
 
-                // sleep for 10 ms
-                std::this_thread::sleep_for(std::chrono::milliseconds(100));
+                // sleep for 20 ms
+                std::this_thread::sleep_for(std::chrono::milliseconds(20));
             }
         }
     );
