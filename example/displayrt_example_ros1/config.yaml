@@ -10,7 +10,7 @@ displays:
         px: 0 # window position x
         py: 0 # window position y
         width: 800 # window width in pixels
-        height: 1200 # window height in pixels
+        height: 1000 # window height in pixels
         plot_count: 2 # number of servos
         plots:
           - id: 0 # plot ID = servo ID

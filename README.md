@@ -22,6 +22,7 @@ It is essentially an abstraction class named **DisplayRT** that can be coordinat
 You should develop your display class by inheriting **DisplayRT** and implement the virtual methods *Setup()* and *Update()*. 
 A quick start would be calling *defaultSetupDisplay()* and *defaultUpdateDisplay()* in your *Setup()* and *Update()* implementations respectively. 
 
+The plotting options are consistent with QCustomPlot and summarized in [usage.md](./doc/usage.md). 
 See examples in /example folder for more usage cases. 
 [ROS1](example/displayrt_example_ros1/README.md), [ROS2](example/displayrt_example_ros2/README.md), [LCM](example/displayrt_example_lcm/README.md) examples are compiled separately as individual projects. 
 
@@ -31,6 +32,4 @@ This project includes the following third-party components:
 - [mini-yaml](https://github.com/jimmiebergmann/mini-yaml.git), licensed under the MIT License. See `thirdparty/mini-yaml/LICENSE` for details.
 
 ## TODO
-- ROS1/ROS2 examples
-- LCM examples
 - add yaml-cpp support

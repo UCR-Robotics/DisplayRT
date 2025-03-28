@@ -1,4 +1,10 @@
 # DisplayRT Example for LCM
+
+<div style="text-align: left;">
+  <img src="../../doc/DisplayRT_example_lcm.gif" alt="DisplayRT Example with LCM" width="800"/>
+</div>
+
+
 This is an example CMake project for DisplayRT with Lightweight Communications and Marshalling (LCM). 
 The program is multithreaded with one thread publishing multiple messages on different topics through LCM and the other thread subscribing to the topics and plotting online the received message data.  
 

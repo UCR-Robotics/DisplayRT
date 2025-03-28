@@ -1,4 +1,10 @@
 # DisplayRT Example for ROS2
+
+<div style="text-align: left;">
+  <img src="../../doc/DisplayRT_example_ros2.gif" alt="DisplayRT Example with ROS2" width="800"/>
+</div>
+
+
 This is an example CMake project for DisplayRT with Robot Operating System (ROS2). 
 The program is multithreaded with one thread publishing multiple messages on different topics through ROS2 and the other thread subscribing to the topics and plotting online the received message data.
 
@@ -10,7 +16,7 @@ In addition to the [packages](../../README.md#dependencies) for DisplayRT, you n
 # Compilation and Run
 The easiest way is to run [setup.sh](./setup.sh) in the current project folder. It will generate ROS2 message headers and libraries and compile the project.  You can also manually compile it as a plain CMake project in /build directory. 
 The generated executable is stored in /bin and message files in the /build directory. 
-
 Note that the environment variable ```LD_LIBRARY_PATH``` needs to include the absolute path to the /build directory. 
-
 Assume you are still in the current project folder, run ```./bin/displayrt_example_ros2_node -path-to-config ./config.yaml```. 
+
+If you need to build it with catkin_make in the ROS2 workspace, copy the project to the right location such as ros2_ws/src and rewrite the CMakeList.txt following ROS2 tutorial.  
